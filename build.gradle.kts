@@ -33,7 +33,6 @@ dependencies {
     // 使うのはRowMapperのみなため、他はexclude
     implementation(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE") {
         exclude(module = "spring-beans")
-        exclude(module = "spring-core")
         exclude(module = "spring-jcl")
         exclude(module = "spring-tx")
     }
