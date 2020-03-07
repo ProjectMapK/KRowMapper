@@ -42,6 +42,8 @@ dependencies {
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = "5.6.0") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
+    // https://mvnrepository.com/artifact/io.mockk/mockk
+    testImplementation("io.mockk:mockk:1.9.3")
     // 現状プロパティ名の変換はテストでしか使っていないのでtestImplementation
     // https://mvnrepository.com/artifact/com.google.guava/guava
     testImplementation(group = "com.google.guava", name = "guava", version = "28.2-jre")
