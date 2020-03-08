@@ -1,7 +1,6 @@
 package com.mapk.krowmapper
 
 import com.google.common.base.CaseFormat
-import com.mapk.core.KFunctionForCall
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -23,7 +22,7 @@ class SimpleMappingTest {
         every { resultSet.getObject("foo_id", any<Class<*>>()) } returns 1
         every { resultSet.getObject("str_value", any<Class<*>>()) } returns "str"
 
-        val result = KRowMapper(KFunctionForCall(::Dst), this::camelToSnake).mapRow(resultSet, 0)
+        val result = KRowMapper(::Dst, this::camelToSnake).mapRow(resultSet, 0)
 
         assertEquals(1, result.fooId)
         assertEquals("str", result.strValue)
