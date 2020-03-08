@@ -5,10 +5,10 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotation
 
-class ParameterForMap<T : Any> private constructor(
+class ParameterForMap<D : Any> private constructor(
     val name: String,
     val index: Int,
-    val clazz: Class<T>
+    val clazz: Class<D>
 ) {
     companion object {
         fun newInstance(param: KParameter, propertyNameConverter: (String) -> String = { it }): ParameterForMap<*> {
