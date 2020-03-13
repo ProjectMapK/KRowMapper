@@ -5,9 +5,10 @@ import com.mapk.annotations.KParameterAlias
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 
+@Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
 class ParameterForMap<D : Any> private constructor(
     val name: String,
-    val index: Int,
+    val param: KParameter,
     val clazz: Class<D>
 ) {
     companion object {
@@ -23,7 +24,7 @@ class ParameterForMap<D : Any> private constructor(
 
             return ParameterForMap(
                 alias ?: propertyNameConverter(param.name!!),
-                param.index,
+                param,
                 (param.type.classifier as KClass<*>).java
             )
         }

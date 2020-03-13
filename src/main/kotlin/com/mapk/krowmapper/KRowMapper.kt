@@ -23,10 +23,10 @@ class KRowMapper<T : Any> private constructor(
         val argumentBucket = function.getArgumentBucket()
 
         parameters.forEach { param ->
-            argumentBucket.setArgument(when {
+            argumentBucket.putIfAbsent(param.param, when {
                 param.clazz.isEnum -> EnumMapper.getEnum(param.clazz, rs.getObject(param.name, stringClazz))
                 else -> rs.getObject(param.name, param.clazz)
-            }, param.index)
+            })
         }
 
         return function.call(argumentBucket)
