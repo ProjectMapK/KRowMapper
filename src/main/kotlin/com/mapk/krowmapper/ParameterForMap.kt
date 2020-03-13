@@ -5,7 +5,6 @@ import com.mapk.annotations.KParameterAlias
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 
-@Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE")
 class ParameterForMap<D : Any> private constructor(
     val name: String,
     val param: KParameter,
