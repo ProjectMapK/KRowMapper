@@ -2,7 +2,9 @@ package com.mapk.krowmapper
 
 import com.mapk.core.EnumMapper
 import com.mapk.core.KFunctionForCall
+import com.mapk.core.toKConstructor
 import java.sql.ResultSet
+import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import org.springframework.jdbc.core.RowMapper
@@ -13,6 +15,10 @@ class KRowMapper<T : Any> private constructor(
 ) : RowMapper<T> {
     constructor(function: KFunction<T>, propertyNameConverter: (String) -> String = { it }) : this(
         KFunctionForCall(function), propertyNameConverter
+    )
+
+    constructor(clazz: KClass<T>, propertyNameConverter: (String) -> String = { it }) : this(
+        clazz.toKConstructor(), propertyNameConverter
     )
 
     private val parameters: List<ParameterForMap<*>> = function.parameters
