@@ -5,7 +5,7 @@
 KRowMapper
 ====
 This is a `RowMapper` like a `BeanPropertyRowMapper` for `Kotlin`.  
-You can call `KFunction`(e.g. `method reference`) from `Object`.
+You can call `KFunction`(e.g. `method reference`) from `ResultSet`.
 
 ```kotlin
 // before
