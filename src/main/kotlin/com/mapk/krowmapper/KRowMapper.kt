@@ -2,6 +2,7 @@ package com.mapk.krowmapper
 
 import com.mapk.core.EnumMapper
 import com.mapk.core.KFunctionForCall
+import com.mapk.core.isUseDefaultArgument
 import com.mapk.core.toKConstructor
 import java.sql.ResultSet
 import kotlin.reflect.KClass
@@ -22,7 +23,7 @@ class KRowMapper<T : Any> private constructor(
     )
 
     private val parameters: List<ParameterForMap<*>> = function.parameters
-        .filter { it.kind != KParameter.Kind.INSTANCE }
+        .filter { it.kind != KParameter.Kind.INSTANCE && !it.isUseDefaultArgument() }
         .map { ParameterForMap.newInstance(it, propertyNameConverter) }
 
     override fun mapRow(rs: ResultSet, rowNum: Int): T {
