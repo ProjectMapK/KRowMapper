@@ -47,6 +47,8 @@ dependencies {
     // 現状プロパティ名の変換はテストでしか使っていないのでtestImplementation
     // https://mvnrepository.com/artifact/com.google.guava/guava
     testImplementation(group = "com.google.guava", name = "guava", version = "28.2-jre")
+    // テスト時には無いと困るため、別口でimplementation
+    testImplementation(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE")
 }
 
 tasks {
