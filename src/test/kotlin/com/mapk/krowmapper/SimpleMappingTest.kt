@@ -27,7 +27,7 @@ class SimpleMappingTest {
         assertEquals(1, result.fooId)
         assertEquals("str", result.strValue)
 
-        verify(exactly = 1) { resultSet.getObject("foo_id", Int::class.java) }
+        verify(exactly = 1) { resultSet.getObject("foo_id", Integer::class.java) }
         verify(exactly = 1) { resultSet.getObject("str_value", String::class.java) }
     }
 }

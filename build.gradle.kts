@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.mapk"
-version = "0.3"
+version = "0.4"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -30,13 +30,13 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation(kotlin("reflect"))
+    api("com.github.ProjectMapK:Shared:0.8")
     // 使うのはRowMapperのみなため他はexclude、またバージョンそのものは使う相手に合わせるためcompileOnly
     compileOnly(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE") {
         exclude(module = "spring-beans")
         exclude(module = "spring-jcl")
         exclude(module = "spring-tx")
     }
-    api("com.github.ProjectMapK:Shared:0.7")
 
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
     testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = "5.6.0") {
@@ -44,11 +44,15 @@ dependencies {
     }
     // https://mvnrepository.com/artifact/io.mockk/mockk
     testImplementation("io.mockk:mockk:1.9.3")
+
+    // テスト時には無いと困るため、別口でimplementation
+    testImplementation(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE")
+    // https://mvnrepository.com/artifact/com.h2database/h2
+    testImplementation(group = "com.h2database", name = "h2", version = "1.4.200")
+
     // 現状プロパティ名の変換はテストでしか使っていないのでtestImplementation
     // https://mvnrepository.com/artifact/com.google.guava/guava
     testImplementation(group = "com.google.guava", name = "guava", version = "28.2-jre")
-    // テスト時には無いと困るため、別口でimplementation
-    testImplementation(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE")
 }
 
 tasks {

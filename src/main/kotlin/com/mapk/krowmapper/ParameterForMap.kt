@@ -17,31 +17,36 @@ import kotlin.reflect.jvm.jvmName
 
 class ParameterForMap private constructor(
     val param: KParameter,
-    private val name: String,
-    kClazz: KClass<*>
+    name: String,
+    parameterKClazz: KClass<*>
 ) {
-    private val javaClazz: Class<*> = kClazz.java
-    private val deserializer: KFunction<*>?
+    private val objectGetter: (ResultSet) -> Any?
 
     init {
-        val deserializers = deserializerFromConstructors(kClazz) +
-                deserializerFromStaticMethods(kClazz) +
-                deserializerFromCompanionObject(kClazz)
+        val deserializer = parameterKClazz.getDeserializer()
 
-        deserializer = when {
-            deserializers.isEmpty() -> null
-            deserializers.size == 1 -> deserializers.single()
-            else -> throw IllegalArgumentException("Find multiple deserializer from ${kClazz.jvmName}")
+        if (deserializer != null) {
+            val targetClass = deserializer.parameters.single().type.classifier as KClass<*>
+
+            objectGetter = {
+                deserializer.call(it.getObject(name, targetClass.javaObjectType))
+            }
+        } else {
+            val clazz = parameterKClazz.javaObjectType
+
+            objectGetter = if (clazz.isEnum) {
+                {
+                    EnumMapper.getEnum(clazz, it.getString(name))
+                }
+            } else {
+                {
+                    it.getObject(name, clazz)
+                }
+            }
         }
     }
 
-    fun getObject(rs: ResultSet): Any? = when {
-        javaClazz.isEnum -> EnumMapper.getEnum(javaClazz, rs.getString(name))
-        else -> {
-            val value: Any? = rs.getObject(name, javaClazz)
-            deserializer?.call(value) ?: value
-        }
-    }
+    fun getObject(rs: ResultSet): Any? = objectGetter(rs)
 
     companion object {
         fun newInstance(param: KParameter, propertyNameConverter: (String) -> String = { it }): ParameterForMap {
@@ -51,6 +56,18 @@ class ParameterForMap private constructor(
                 param.type.classifier as KClass<*>
             )
         }
+    }
+}
+
+private fun <T : Any> KClass<T>.getDeserializer(): KFunction<T>? {
+    val deserializers = deserializerFromConstructors(this) +
+            deserializerFromStaticMethods(this) +
+            deserializerFromCompanionObject(this)
+
+    return when {
+        deserializers.isEmpty() -> null
+        deserializers.size == 1 -> deserializers.single()
+        else -> throw IllegalArgumentException("Find multiple deserializer from $jvmName")
     }
 }
 
