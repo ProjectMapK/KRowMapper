@@ -24,15 +24,7 @@ class ParameterForMap private constructor(
     private val deserializer: KFunction<*>?
 
     init {
-        val deserializers = deserializerFromConstructors(kClazz) +
-                deserializerFromStaticMethods(kClazz) +
-                deserializerFromCompanionObject(kClazz)
-
-        deserializer = when {
-            deserializers.isEmpty() -> null
-            deserializers.size == 1 -> deserializers.single()
-            else -> throw IllegalArgumentException("Find multiple deserializer from ${kClazz.jvmName}")
-        }
+        deserializer = kClazz.getDeserializer()
     }
 
     fun getObject(rs: ResultSet): Any? = when {
@@ -51,6 +43,18 @@ class ParameterForMap private constructor(
                 param.type.classifier as KClass<*>
             )
         }
+    }
+}
+
+private fun <T : Any> KClass<T>.getDeserializer(): KFunction<T>? {
+    val deserializers = deserializerFromConstructors(this) +
+            deserializerFromStaticMethods(this) +
+            deserializerFromCompanionObject(this)
+
+    return when {
+        deserializers.isEmpty() -> null
+        deserializers.size == 1 -> deserializers.single()
+        else -> throw IllegalArgumentException("Find multiple deserializer from $jvmName")
     }
 }
 
