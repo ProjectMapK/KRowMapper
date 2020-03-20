@@ -25,19 +25,22 @@ class ParameterForMap private constructor(
     init {
         val deserializer = parameterKClazz.getDeserializer()
 
-        objectGetter = if (deserializer != null) {
+        if (deserializer != null) {
             val targetClass = deserializer.parameters.single().type.classifier as KClass<*>
 
-            {
+            objectGetter = {
                 deserializer.call(it.getObject(name, targetClass.javaObjectType))
             }
         } else {
-            {
-                val clazz = parameterKClazz.javaObjectType
+            val clazz = parameterKClazz.javaObjectType
 
-                when {
-                    clazz.isEnum -> EnumMapper.getEnum(clazz, it.getString(name))
-                    else -> it.getObject(name, clazz)
+            objectGetter = if (clazz.isEnum) {
+                {
+                    EnumMapper.getEnum(clazz, it.getString(name))
+                }
+            } else {
+                {
+                    it.getObject(name, clazz)
                 }
             }
         }
