@@ -18,13 +18,13 @@ import kotlin.reflect.jvm.jvmName
 class ParameterForMap private constructor(
     val param: KParameter,
     private val name: String,
-    kClazz: KClass<*>
+    parameterKClazz: KClass<*>
 ) {
-    private val javaClazz: Class<*> = kClazz.java
+    private val javaClazz: Class<*> = parameterKClazz.java
     private val deserializer: KFunction<*>?
 
     init {
-        deserializer = kClazz.getDeserializer()
+        deserializer = parameterKClazz.getDeserializer()
     }
 
     fun getObject(rs: ResultSet): Any? = when {
