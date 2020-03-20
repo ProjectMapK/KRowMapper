@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.mapk"
-version = "0.2"
+version = "0.3"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -30,8 +30,8 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation(kotlin("reflect"))
-    // 使うのはRowMapperのみなため、他はexclude
-    implementation(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE") {
+    // 使うのはRowMapperのみなため他はexclude、またバージョンそのものは使う相手に合わせるためcompileOnly
+    compileOnly(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE") {
         exclude(module = "spring-beans")
         exclude(module = "spring-jcl")
         exclude(module = "spring-tx")
@@ -47,6 +47,8 @@ dependencies {
     // 現状プロパティ名の変換はテストでしか使っていないのでtestImplementation
     // https://mvnrepository.com/artifact/com.google.guava/guava
     testImplementation(group = "com.google.guava", name = "guava", version = "28.2-jre")
+    // テスト時には無いと困るため、別口でimplementation
+    testImplementation(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE")
 }
 
 tasks {

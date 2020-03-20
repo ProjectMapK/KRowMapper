@@ -1,6 +1,5 @@
 package com.mapk.krowmapper
 
-import com.mapk.core.EnumMapper
 import com.mapk.core.KFunctionForCall
 import com.mapk.core.isUseDefaultArgument
 import com.mapk.core.toKConstructor
@@ -22,7 +21,7 @@ class KRowMapper<T : Any> private constructor(
         clazz.toKConstructor(), propertyNameConverter
     )
 
-    private val parameters: List<ParameterForMap<*>> = function.parameters
+    private val parameters: List<ParameterForMap> = function.parameters
         .filter { it.kind != KParameter.Kind.INSTANCE && !it.isUseDefaultArgument() }
         .map { ParameterForMap.newInstance(it, propertyNameConverter) }
 
@@ -30,16 +29,9 @@ class KRowMapper<T : Any> private constructor(
         val argumentBucket = function.getArgumentBucket()
 
         parameters.forEach { param ->
-            argumentBucket.putIfAbsent(param.param, when {
-                param.clazz.isEnum -> EnumMapper.getEnum(param.clazz, rs.getObject(param.name, stringClazz))
-                else -> rs.getObject(param.name, param.clazz)
-            })
+            argumentBucket.putIfAbsent(param.param, param.getObject(rs))
         }
 
         return function.call(argumentBucket)
-    }
-
-    companion object {
-        private val stringClazz = String::class.java
     }
 }
