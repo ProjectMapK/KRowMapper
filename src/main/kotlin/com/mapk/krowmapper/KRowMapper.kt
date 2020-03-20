@@ -22,7 +22,7 @@ class KRowMapper<T : Any> private constructor(
         clazz.toKConstructor(), propertyNameConverter
     )
 
-    private val parameters: List<ParameterForMap<*>> = function.parameters
+    private val parameters: List<ParameterForMap> = function.parameters
         .filter { it.kind != KParameter.Kind.INSTANCE && !it.isUseDefaultArgument() }
         .map { ParameterForMap.newInstance(it, propertyNameConverter) }
 
