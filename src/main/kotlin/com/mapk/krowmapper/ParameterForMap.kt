@@ -8,9 +8,9 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 
 class ParameterForMap private constructor(
-    val name: String,
     val param: KParameter,
-    val clazz: Class<*>,
+    private val name: String,
+    private val clazz: Class<*>,
     private val deserializer: KFunction<*>?
 ) {
     fun getObject(rs: ResultSet): Any? = when {
@@ -24,8 +24,8 @@ class ParameterForMap private constructor(
     companion object {
         fun newInstance(param: KParameter, propertyNameConverter: (String) -> String = { it }): ParameterForMap {
             return ParameterForMap(
-                propertyNameConverter(param.getAliasOrName()!!),
                 param,
+                propertyNameConverter(param.getAliasOrName()!!),
                 (param.type.classifier as KClass<*>).java,
                 null
             )
