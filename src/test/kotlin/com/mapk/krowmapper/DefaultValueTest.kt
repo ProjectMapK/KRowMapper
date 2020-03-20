@@ -27,7 +27,7 @@ class DefaultValueTest {
         Assertions.assertEquals(1, result.fooId)
         Assertions.assertEquals("default", result.barValue)
 
-        verify(exactly = 1) { resultSet.getObject("foo_id", Int::class.java) }
+        verify(exactly = 1) { resultSet.getObject("foo_id", Integer::class.java) }
         verify(exactly = 0) { resultSet.getObject("bar_value", String::class.java) }
     }
 }
