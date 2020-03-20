@@ -10,8 +10,9 @@ import kotlin.reflect.KParameter
 class ParameterForMap private constructor(
     val param: KParameter,
     private val name: String,
-    private val clazz: Class<*>
+    kClazz: KClass<*>
 ) {
+    private val javaClazz: Class<*> = kClazz.java
     private val deserializer: KFunction<*>?
 
     init {
@@ -19,9 +20,9 @@ class ParameterForMap private constructor(
     }
 
     fun getObject(rs: ResultSet): Any? = when {
-        clazz.isEnum -> EnumMapper.getEnum(clazz, rs.getString(name))
+        javaClazz.isEnum -> EnumMapper.getEnum(javaClazz, rs.getString(name))
         else -> {
-            val value: Any? = rs.getObject(name, clazz)
+            val value: Any? = rs.getObject(name, javaClazz)
             deserializer?.call(value) ?: value
         }
     }
@@ -31,7 +32,7 @@ class ParameterForMap private constructor(
             return ParameterForMap(
                 param,
                 propertyNameConverter(param.getAliasOrName()!!),
-                (param.type.classifier as KClass<*>).java
+                param.type.classifier as KClass<*>
             )
         }
     }
