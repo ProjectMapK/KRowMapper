@@ -31,15 +31,11 @@ class KRowMapper<T : Any> private constructor(
 
         parameters.forEach { param ->
             argumentBucket.putIfAbsent(param.param, when {
-                param.clazz.isEnum -> EnumMapper.getEnum(param.clazz, rs.getObject(param.name, stringClazz))
+                param.clazz.isEnum -> EnumMapper.getEnum(param.clazz, rs.getString(param.name))
                 else -> rs.getObject(param.name, param.clazz)
             })
         }
 
         return function.call(argumentBucket)
-    }
-
-    companion object {
-        private val stringClazz = String::class.java
     }
 }
