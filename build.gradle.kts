@@ -47,6 +47,8 @@ dependencies {
 
     // テスト時には無いと困るため、別口でimplementation
     testImplementation(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE")
+    // https://mvnrepository.com/artifact/com.h2database/h2
+    testImplementation(group = "com.h2database", name = "h2", version = "1.4.200")
 
     // 現状プロパティ名の変換はテストでしか使っていないのでtestImplementation
     // https://mvnrepository.com/artifact/com.google.guava/guava
