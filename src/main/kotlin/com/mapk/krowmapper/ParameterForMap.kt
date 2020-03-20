@@ -10,9 +10,14 @@ import kotlin.reflect.KParameter
 class ParameterForMap private constructor(
     val param: KParameter,
     private val name: String,
-    private val clazz: Class<*>,
-    private val deserializer: KFunction<*>?
+    private val clazz: Class<*>
 ) {
+    private val deserializer: KFunction<*>?
+
+    init {
+        deserializer = null
+    }
+
     fun getObject(rs: ResultSet): Any? = when {
         clazz.isEnum -> EnumMapper.getEnum(clazz, rs.getString(name))
         else -> {
@@ -26,8 +31,7 @@ class ParameterForMap private constructor(
             return ParameterForMap(
                 param,
                 propertyNameConverter(param.getAliasOrName()!!),
-                (param.type.classifier as KClass<*>).java,
-                null
+                (param.type.classifier as KClass<*>).java
             )
         }
     }
