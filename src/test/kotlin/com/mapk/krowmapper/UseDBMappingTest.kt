@@ -8,6 +8,7 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
+import javax.sql.DataSource
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UseDBMappingTest {
@@ -38,8 +39,9 @@ class UseDBMappingTest {
 
     @BeforeAll
     fun beforeAll() {
-        val dataSource = JdbcDataSource()
-        dataSource.setUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS APP\\;SET SCHEMA APP;")
+        val dataSource: DataSource = JdbcDataSource().apply {
+            setUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA IF NOT EXISTS APP\\;SET SCHEMA APP;")
+        }
 
         jdbcTemplate = JdbcTemplate(dataSource)
 
