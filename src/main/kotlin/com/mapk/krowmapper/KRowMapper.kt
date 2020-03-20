@@ -1,6 +1,5 @@
 package com.mapk.krowmapper
 
-import com.mapk.core.EnumMapper
 import com.mapk.core.KFunctionForCall
 import com.mapk.core.isUseDefaultArgument
 import com.mapk.core.toKConstructor
@@ -30,10 +29,7 @@ class KRowMapper<T : Any> private constructor(
         val argumentBucket = function.getArgumentBucket()
 
         parameters.forEach { param ->
-            argumentBucket.putIfAbsent(param.param, when {
-                param.clazz.isEnum -> EnumMapper.getEnum(param.clazz, rs.getString(param.name))
-                else -> rs.getObject(param.name, param.clazz)
-            })
+            argumentBucket.putIfAbsent(param.param, param.getObject(rs))
         }
 
         return function.call(argumentBucket)
