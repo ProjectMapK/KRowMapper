@@ -29,11 +29,11 @@ class ParameterForMap private constructor(
             val targetClass = deserializer.parameters.single().type.classifier as KClass<*>
 
             {
-                deserializer.call(it.getObject(name, targetClass.java))
+                deserializer.call(it.getObject(name, targetClass.javaObjectType))
             }
         } else {
             {
-                val clazz = parameterKClazz.java
+                val clazz = parameterKClazz.javaObjectType
 
                 when {
                     clazz.isEnum -> EnumMapper.getEnum(clazz, it.getString(name))
