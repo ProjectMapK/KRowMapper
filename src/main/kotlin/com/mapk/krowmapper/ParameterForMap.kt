@@ -4,13 +4,13 @@ import com.mapk.core.getAliasOrName
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 
-class ParameterForMap<D : Any> private constructor(
+class ParameterForMap private constructor(
     val name: String,
     val param: KParameter,
-    val clazz: Class<D>
+    val clazz: Class<*>
 ) {
     companion object {
-        fun newInstance(param: KParameter, propertyNameConverter: (String) -> String = { it }): ParameterForMap<*> {
+        fun newInstance(param: KParameter, propertyNameConverter: (String) -> String = { it }): ParameterForMap {
             return ParameterForMap(
                 propertyNameConverter(param.getAliasOrName()!!),
                 param,
