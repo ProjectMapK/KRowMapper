@@ -17,23 +17,33 @@ import kotlin.reflect.jvm.jvmName
 
 class ParameterForMap private constructor(
     val param: KParameter,
-    private val name: String,
+    name: String,
     parameterKClazz: KClass<*>
 ) {
-    private val javaClazz: Class<*> = parameterKClazz.java
-    private val deserializer: KFunction<*>?
+    private val objectGetter: (ResultSet) -> Any?
 
     init {
-        deserializer = parameterKClazz.getDeserializer()
-    }
+        val deserializer = parameterKClazz.getDeserializer()
 
-    fun getObject(rs: ResultSet): Any? = when {
-        javaClazz.isEnum -> EnumMapper.getEnum(javaClazz, rs.getString(name))
-        else -> {
-            val value: Any? = rs.getObject(name, javaClazz)
-            deserializer?.call(value) ?: value
+        objectGetter = if (deserializer != null) {
+            val targetClass = deserializer.parameters.single().type.classifier as KClass<*>
+
+            {
+                deserializer.call(it.getObject(name, targetClass.java))
+            }
+        } else {
+            {
+                val clazz = parameterKClazz.java
+
+                when {
+                    clazz.isEnum -> EnumMapper.getEnum(clazz, it.getString(name))
+                    else -> it.getObject(name, clazz)
+                }
+            }
         }
     }
+
+    fun getObject(rs: ResultSet): Any? = objectGetter(rs)
 
     companion object {
         fun newInstance(param: KParameter, propertyNameConverter: (String) -> String = { it }): ParameterForMap {
