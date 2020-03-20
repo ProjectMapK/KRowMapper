@@ -1,14 +1,15 @@
 package com.mapk.krowmapper
 
 import com.google.common.base.CaseFormat
+import javax.sql.DataSource
 import org.h2.jdbcx.JdbcDataSource
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
-import javax.sql.DataSource
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UseDBMappingTest {
@@ -22,7 +23,19 @@ class UseDBMappingTest {
         val fooStatus: FooStatus,
         val isBar: Boolean,
         val description: String?
-    )
+    ) {
+        companion object {
+            fun fooFactory(
+                fooId: Int,
+                fooName: String,
+                fooStatus: FooStatus,
+                isBar: String,
+                description: String?
+            ) = Foo(
+                fooId, fooName, fooStatus, isBar.toBoolean(), description
+            )
+        }
+    }
 
     data class FooInsert(
         val fooId: Int,
@@ -63,9 +76,13 @@ class UseDBMappingTest {
 
     @Test
     fun test() {
-        val result = jdbcTemplate.query("SELECT * FROM foo_table", KRowMapper(::Foo) {
+        val result = jdbcTemplate.query("SELECT * FROM foo_table", KRowMapper((Foo)::fooFactory) {
             CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, it)
-        })
-        println(result)
+        }).single()
+
+        assertEquals(
+            Foo(10, "Foo", FooStatus.archive, false, null),
+            result
+        )
     }
 }
