@@ -3,6 +3,7 @@ package com.mapk.krowmapper
 import com.google.common.base.CaseFormat
 import javax.sql.DataSource
 import org.h2.jdbcx.JdbcDataSource
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -84,5 +85,10 @@ class UseDBMappingTest {
             Foo(10, "Foo", FooStatus.archive, false, null),
             result
         )
+    }
+
+    @AfterAll
+    fun afterAll() {
+        jdbcTemplate.dataSource!!.connection.close()
     }
 }
