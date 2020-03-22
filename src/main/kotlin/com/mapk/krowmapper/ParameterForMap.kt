@@ -4,13 +4,16 @@ import com.mapk.annotations.KColumnDeserializer
 import com.mapk.core.EnumMapper
 import com.mapk.core.KFunctionWithInstance
 import com.mapk.core.getAliasOrName
+import com.mapk.deserialization.KColumnDeserializeBy
 import java.lang.IllegalArgumentException
 import java.sql.ResultSet
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
+import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.staticFunctions
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmName
@@ -23,24 +26,33 @@ class ParameterForMap private constructor(
     private val objectGetter: (ResultSet) -> Any?
 
     init {
-        val deserializer = parameterKClazz.getDeserializer()
-
-        if (deserializer != null) {
-            val targetClass = deserializer.parameters.single().type.classifier as KClass<*>
+        val deserializerFromParameter = param.getDeserializer()
+        if (deserializerFromParameter != null) {
+            val deserialize = deserializerFromParameter::deserialize
 
             objectGetter = {
-                deserializer.call(it.getObject(name, targetClass.javaObjectType))
+                deserialize.call(it.getObject(name, deserializerFromParameter.srcClass))
             }
         } else {
-            val clazz = parameterKClazz.javaObjectType
+            val deserializer = parameterKClazz.getDeserializer()
 
-            objectGetter = if (clazz.isEnum) {
-                {
-                    EnumMapper.getEnum(clazz, it.getString(name))
+            if (deserializer != null) {
+                val targetClass = deserializer.parameters.single().type.classifier as KClass<*>
+
+                objectGetter = {
+                    deserializer.call(it.getObject(name, targetClass.javaObjectType))
                 }
             } else {
-                {
-                    it.getObject(name, clazz)
+                val clazz = parameterKClazz.javaObjectType
+
+                objectGetter = if (clazz.isEnum) {
+                    {
+                        EnumMapper.getEnum(clazz, it.getString(name))
+                    }
+                } else {
+                    {
+                        it.getObject(name, clazz)
+                    }
                 }
             }
         }
@@ -57,6 +69,19 @@ class ParameterForMap private constructor(
             )
         }
     }
+}
+
+private fun KParameter.getDeserializer(): com.mapk.deserialization.KColumnDeserializer<*, *, *>? {
+    val deserializers = this.annotations.mapNotNull { paramAnnotation ->
+        paramAnnotation.annotationClass
+            .findAnnotation<KColumnDeserializeBy>()
+            ?.let { it.deserializer.primaryConstructor!!.call(paramAnnotation) }
+    }
+
+    if (1 < deserializers.size)
+        throw IllegalArgumentException("Find multiple deserializer from ${(this.type.classifier as KClass<*>).jvmName}")
+
+    return deserializers.singleOrNull()
 }
 
 private fun <T : Any> KClass<T>.getDeserializer(): KFunction<T>? {
