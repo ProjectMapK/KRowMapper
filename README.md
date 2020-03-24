@@ -29,6 +29,29 @@ val dst: Dst = jdbcTemplate.query(query) { rs, _ ->
 val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst))
 ```
 
-## How to use
+## Installation
 Published on JitPack.  
-Please see [here](https://jitpack.io/#ProjectMapK/KRowMapper/) for the introduction method.  
+You can use this library on `maven`, `gradle` and any other build tools.  
+Please see [here](https://jitpack.io/#ProjectMapK/KRowMapper/) for the formal introduction method. 
+
+### Example on maven
+**1. add repository reference for JitPack**
+
+```xml
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+```
+
+**2. add dependency**
+
+```xml
+	<dependency>
+	    <groupId>com.github.ProjectMapK</groupId>
+	    <artifactId>KRowMapper</artifactId>
+	    <version>Tag</version>
+	</dependency>
+```
