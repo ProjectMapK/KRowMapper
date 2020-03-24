@@ -1,7 +1,7 @@
 package com.mapk.krowmapper
 
+import com.mapk.deserialization.AbstractKColumnDeserializer
 import com.mapk.deserialization.KColumnDeserializeBy
-import com.mapk.deserialization.KColumnDeserializer
 import io.mockk.every
 import io.mockk.mockk
 import java.sql.ResultSet
@@ -21,7 +21,7 @@ class DeserializerTest {
 
     class LocalDateTimeDeserializerImpl(
         annotation: LocalDateTimeDeserializer
-    ) : KColumnDeserializer<LocalDateTimeDeserializer, String, LocalDateTime>(annotation) {
+    ) : AbstractKColumnDeserializer<LocalDateTimeDeserializer, String, LocalDateTime>(annotation) {
         private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(annotation.pattern)
 
         override val srcClass: Class<String> = String::class.javaObjectType
