@@ -8,8 +8,15 @@ This is a `RowMapper` like a `BeanPropertyRowMapper` for `Kotlin`.
 You can call `KFunction`(e.g. `method reference`) from `ResultSet`.
 
 ```kotlin
+data class Dst(
+    foo: String,
+    bar: String,
+    baz: Int?,
+    ...
+)
+
 // before
-val dst = jdbcTemplate.query(query) { rs, _ ->
+val dst: Dst = jdbcTemplate.query(query) { rs, _ ->
     Dst(
             rs.getString("foo"),
             rs.getString("bar"),
@@ -19,7 +26,7 @@ val dst = jdbcTemplate.query(query) { rs, _ ->
 }
 
 // after
-val dst = jdbcTemplate.query(query, KRowMapper(::Dst))
+val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst))
 ```
 
 ## How to use
