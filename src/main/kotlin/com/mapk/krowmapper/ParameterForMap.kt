@@ -4,6 +4,7 @@ import com.mapk.annotations.KColumnDeserializer
 import com.mapk.core.EnumMapper
 import com.mapk.core.KFunctionWithInstance
 import com.mapk.core.getAliasOrName
+import com.mapk.deserialization.AbstractKColumnDeserializer
 import com.mapk.deserialization.KColumnDeserializeBy
 import java.lang.IllegalArgumentException
 import java.sql.ResultSet
@@ -71,7 +72,7 @@ class ParameterForMap private constructor(
     }
 }
 
-private fun KParameter.getDeserializer(): com.mapk.deserialization.KColumnDeserializer<*, *, *>? {
+private fun KParameter.getDeserializer(): AbstractKColumnDeserializer<*, *, *>? {
     val deserializers = this.annotations.mapNotNull { paramAnnotation ->
         paramAnnotation.annotationClass
             .findAnnotation<KColumnDeserializeBy>()
