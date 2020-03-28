@@ -44,9 +44,10 @@ KRowMapper(::Dst) { colName: String ->
 ### Deserialize column
 `KRowMapper` provides a deserialization function for the acquisition results of three patterns.
 
+- Deserialize at initialization using the `backing property` or `factory method`.
 - Define a deserializer for the `class`.
 - Define custom deserializer `annotation`.
-- Deserialize at initialization using the `backing property`.
+
 
 #### Define a deserializer for the class
 By assigning the `KColumnDeserializer` `annotation` to the `constructor` or `factory method`, deserialization by the `KFunction` can be performed.  
