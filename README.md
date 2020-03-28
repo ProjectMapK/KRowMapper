@@ -41,6 +41,13 @@ KRowMapper(::Dst) { colName: String ->
 }
 ```
 
+### Deserialize column
+`KRowMapper` provides a deserialization function for the acquisition results of three patterns.
+
+- Define a deserializer for the `class`.
+- Define the original deserializer `annotation`.
+- Deserialize at initialization using the `backing property`.
+
 ## Installation
 Published on JitPack.  
 You can use this library on `maven`, `gradle` and any other build tools.  
