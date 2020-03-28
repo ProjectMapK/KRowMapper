@@ -45,7 +45,7 @@ KRowMapper(::Dst) { colName: String ->
 `KRowMapper` provides a deserialization function for the acquisition results of three patterns.
 
 - Define a deserializer for the `class`.
-- Define the original deserializer `annotation`.
+- Define custom deserializer `annotation`.
 - Deserialize at initialization using the `backing property`.
 
 #### Define a deserializer for the class
