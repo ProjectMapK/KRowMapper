@@ -44,10 +44,41 @@ KRowMapper(::Dst) { colName: String ->
 ### Deserialize column
 `KRowMapper` provides a deserialization function for the acquisition results of three patterns.
 
-- Deserialize at initialization using the `backing property` or `factory method`.
+- Deserialize at initialization using the `factory method` or deserialize on initialize.
 - Define a deserializer for the `class`.
 - Define custom deserializer `annotation`.
 
+#### Deserialize at initialization using the factory method or deserialize on initialize
+Deserialization within a `factory method` or initialization is the simplest method.  
+Also, deserialization from multiple columns to one argument or from one column to multiple arguments cannot be realized other than this method.
+
+```kotlin
+// example of deserialize on factory method
+data class Dst(
+    foo: Foo,
+    bar: Bar,
+    baz: Baz?,
+    ...
+) {
+    companion object {
+        fun factory(
+            foo: String,
+            bar: String,
+            baz: Int?,
+            ...
+        ): Dst {
+            return Dst(
+                Foo(foo),
+                Bar.fromString(bar),
+                baz?.let { Baz(it) },
+                ...
+            )
+        }
+    }
+}
+
+val dst: Dst = jdbcTemplate.query(query, KRowMapper((Dst)::factory))
+```
 
 #### Define a deserializer for the class
 By assigning the `KColumnDeserializer` `annotation` to the `constructor` or `factory method`, deserialization by the `KFunction` can be performed.  
