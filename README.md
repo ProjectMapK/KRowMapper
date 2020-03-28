@@ -29,6 +29,18 @@ val dst: Dst = jdbcTemplate.query(query) { rs, _ ->
 val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst))
 ```
 
+## Usage
+### Convert Naming conventions
+`KRowMapper` searches columns by default in camel case.  
+If the DB is named in snake case, mapping can be done by passing a conversion function(e.g. defined in `JackSon`, `Guava`) to `KRowMapper`.
+
+```kotlin
+// if use Guava.
+KRowMapper(::Dst) { colName: String ->
+    CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, colName)
+}
+```
+
 ## Installation
 Published on JitPack.  
 You can use this library on `maven`, `gradle` and any other build tools.  
