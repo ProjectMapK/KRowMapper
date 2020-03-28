@@ -48,6 +48,66 @@ KRowMapper(::Dst) { colName: String ->
 - Define the original deserializer `annotation`.
 - Deserialize at initialization using the `backing property`.
 
+#### Define a deserializer for the class
+By assigning the `KColumnDeserializer` `annotation` to the `constructor` or `factory method`, deserialization by the `KFunction` can be performed.  
+The `method` that assigns this `annotation` must have one argument.
+
+When the deserializer is defined in this way, the destination will be as follows.
+
+```kotlin
+data class Dst(
+    val foo: ByConstructor,
+    val bar: BySecondaryConstructor,
+    val baz: ByCompanionObject,
+    val qux: ByStaticMethod
+)
+```
+
+##### constructor
+```kotlin
+data class ByConstructor @KColumnDeserializer constructor(val fooString: String)
+```
+
+##### secondary constructor
+```kotlin
+data class BySecondaryConstructor(val barShort: Short) {
+    @KColumnDeserializer
+    constructor(bar: String) : this(bar.toShort())
+}
+``` 
+
+##### factory method
+```kotlin
+data class ByCompanionObject(val bazInt: Int) {
+    companion object {
+        @KColumnDeserializer
+        fun factory(baz: String) = ByCompanionObject(baz.toInt())
+    }
+}
+```
+
+##### (static method)
+`Java` `static method` is also supported.
+
+```java
+public class ByStaticMethod {
+    private final String quxString;
+
+    public ByStaticMethod(String quxString) {
+        this.quxString = quxString;
+    }
+
+    public String getQuxString() {
+        return quxString;
+    }
+
+    @KColumnDeserializer
+    public static ByStaticMethod factory(Integer quxArg) {
+        return new ByStaticMethod(quxArg.toString());
+    }
+}
+```
+
 ## Installation
 Published on JitPack.  
 You can use this library on `maven`, `gradle` and any other build tools.  
