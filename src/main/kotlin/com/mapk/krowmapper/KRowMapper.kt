@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.RowMapper
 
 class KRowMapper<T : Any> private constructor(
     private val function: KFunctionForCall<T>,
-    parameterNameConverter: (String) -> String = { it }
+    parameterNameConverter: (String) -> String
 ) : RowMapper<T> {
     constructor(function: KFunction<T>, propertyNameConverter: (String) -> String = { it }) : this(
         KFunctionForCall(function), propertyNameConverter
