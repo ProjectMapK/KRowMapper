@@ -19,7 +19,7 @@ import kotlin.reflect.full.staticFunctions
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmName
 
-class ParameterForMap private constructor(
+internal class ParameterForMap private constructor(
     val param: KParameter,
     name: String,
     parameterKClazz: KClass<*>
@@ -62,10 +62,10 @@ class ParameterForMap private constructor(
     fun getObject(rs: ResultSet): Any? = objectGetter(rs)
 
     companion object {
-        fun newInstance(param: KParameter, propertyNameConverter: (String) -> String = { it }): ParameterForMap {
+        fun newInstance(param: KParameter, parameterNameConverter: (String) -> String = { it }): ParameterForMap {
             return ParameterForMap(
                 param,
-                propertyNameConverter(param.getAliasOrName()!!),
+                parameterNameConverter(param.getAliasOrName()!!),
                 param.type.classifier as KClass<*>
             )
         }

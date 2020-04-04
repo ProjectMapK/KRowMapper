@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.RowMapper
 
 class KRowMapper<T : Any> private constructor(
     private val function: KFunctionForCall<T>,
-    propertyNameConverter: (String) -> String = { it }
+    parameterNameConverter: (String) -> String = { it }
 ) : RowMapper<T> {
     constructor(function: KFunction<T>, propertyNameConverter: (String) -> String = { it }) : this(
         KFunctionForCall(function), propertyNameConverter
@@ -23,7 +23,7 @@ class KRowMapper<T : Any> private constructor(
 
     private val parameters: List<ParameterForMap> = function.parameters
         .filter { it.kind != KParameter.Kind.INSTANCE && !it.isUseDefaultArgument() }
-        .map { ParameterForMap.newInstance(it, propertyNameConverter) }
+        .map { ParameterForMap.newInstance(it, parameterNameConverter) }
 
     override fun mapRow(rs: ResultSet, rowNum: Int): T {
         val argumentBucket = function.getArgumentBucket()
