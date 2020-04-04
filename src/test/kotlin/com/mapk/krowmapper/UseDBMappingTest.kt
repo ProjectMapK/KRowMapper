@@ -6,6 +6,7 @@ import org.h2.jdbcx.JdbcDataSource
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.springframework.jdbc.core.JdbcTemplate
@@ -13,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@DisplayName("DBを用いてマッピングを行うテスト")
 class UseDBMappingTest {
     enum class FooStatus {
         active, archive, deleted
