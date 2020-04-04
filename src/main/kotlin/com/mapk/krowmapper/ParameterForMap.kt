@@ -19,7 +19,7 @@ import kotlin.reflect.full.staticFunctions
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmName
 
-class ParameterForMap private constructor(
+internal class ParameterForMap private constructor(
     val param: KParameter,
     name: String,
     parameterKClazz: KClass<*>
