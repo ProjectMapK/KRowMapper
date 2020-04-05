@@ -202,7 +202,7 @@ data class Dst(@LocalDateTimeDeserializer val dateTime: LocalDateTime)
 ```
 
 ##### annotation
-For the `annotation class`, specify the deserializer `class` with the `KColumnDeserializeBy` `annotation`.
+For the `annotation class`, specify the deserializer `class` with the `KColumnDeserializeBy` `annotation`.  
 Also, the fields prepared for this `annotation class` can be used from the deserializer.
 
 ```kotlin
