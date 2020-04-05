@@ -30,6 +30,34 @@ val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst))
 ```
 
 ## Usage
+### Initialization
+`KRowMapper` can be initialized from a `method reference` or an initialization function obtained from `KClass`.
+
+#### Initialization from KClass
+When initializing from `KClass`, the `primary constructor` is used by default.
+
+```kotlin
+val rowMapper = KRowMapper(Dst::class)
+```
+
+By assigning the `KConstructor` `annotation` to the `secondary constructor` or `factory method`, you can also specify the `KFunction` to be used when initializing from the `KClass`.
+
+```kotlin
+class SecondaryConstructorDst(val argument: Int) {
+    @KConstructor
+    constructor(argument: Number) : this(argument.toInt())
+}
+
+class CompanionFactoryDst(val argument: IntArray) {
+    companion object {
+        @KConstructor
+        fun factory(csv: String): CompanionFactoryDst {
+            return csv.split(",").map { it.toInt() }.toIntArray().let { CompanionFactoryDst(it) }
+        }
+    }
+}
+```
+
 ### Convert Naming conventions
 `KRowMapper` searches columns by default in camel case.  
 If the DB is named in snake case, mapping can be done by passing a conversion function(e.g. defined in `JackSon`, `Guava`) to `KRowMapper`.
