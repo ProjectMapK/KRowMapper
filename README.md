@@ -273,6 +273,14 @@ When `KParameterRequireNonNull` `annotation` is given to a parameter,
 data class Dst(val fooId: Int, @param:KParameterRequireNonNull val barValue: String = "default")
 ```
 
+### Parameter aliasing
+In `KRowMapper`, the column name of the acquisition target can be specified by giving the `KParameterAlias` `annotation` to the `parameter`.  
+The name conversion function is applied to the name specified here.
+
+```kotlin
+data class Dst(@param:KParameterAlias("fooId") val barValue: Int)
+```
+
 ## Installation
 Published on JitPack.  
 You can use this library on `maven`, `gradle` and any other build tools.  
