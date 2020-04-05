@@ -62,7 +62,7 @@ internal class ParameterForMap private constructor(
     fun getObject(rs: ResultSet): Any? = objectGetter(rs)
 
     companion object {
-        fun newInstance(param: KParameter, parameterNameConverter: (String) -> String = { it }): ParameterForMap {
+        fun newInstance(param: KParameter, parameterNameConverter: (String) -> String): ParameterForMap {
             return ParameterForMap(
                 param,
                 parameterNameConverter(param.getAliasOrName()!!),
