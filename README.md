@@ -215,7 +215,7 @@ annotation class LocalDateTimeDeserializer(val pattern: String = "yyyy-MM-dd'T'H
 ```
 
 ##### deserializer
-Deserializer is created by inheriting `AbstractKColumnDeserializer`.
+Deserializer is created by inheriting `AbstractKColumnDeserializer`.  
 The meaning of each type parameter is as follows.
 
 - `A`: `Annotation class` (`LocalDateTimeDeserializer` in this example)
