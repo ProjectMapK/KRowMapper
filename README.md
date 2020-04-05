@@ -30,6 +30,34 @@ val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst))
 ```
 
 ## Usage
+### Initialization
+`KRowMapper` can be initialized from a `method reference` or an initialization function obtained from `KClass`.
+
+#### Initialization from KClass
+When initializing from `KClass`, the `primary constructor` is used by default.
+
+```kotlin
+val rowMapper = KRowMapper(Dst::class)
+```
+
+By assigning the `KConstructor` `annotation` to the `secondary constructor` or `factory method`, you can also specify the `KFunction` to be used when initializing from the `KClass`.
+
+```kotlin
+class SecondaryConstructorDst(val argument: Int) {
+    @KConstructor
+    constructor(argument: Number) : this(argument.toInt())
+}
+
+class CompanionFactoryDst(val argument: IntArray) {
+    companion object {
+        @KConstructor
+        fun factory(csv: String): CompanionFactoryDst {
+            return csv.split(",").map { it.toInt() }.toIntArray().let { CompanionFactoryDst(it) }
+        }
+    }
+}
+```
+
 ### Convert Naming conventions
 `KRowMapper` searches columns by default in camel case.  
 If the DB is named in snake case, mapping can be done by passing a conversion function(e.g. defined in `JackSon`, `Guava`) to `KRowMapper`.
@@ -174,7 +202,7 @@ data class Dst(@LocalDateTimeDeserializer val dateTime: LocalDateTime)
 ```
 
 ##### annotation
-For the `annotation class`, specify the deserializer `class` with the `KColumnDeserializeBy` `annotation`.
+For the `annotation class`, specify the deserializer `class` with the `KColumnDeserializeBy` `annotation`.  
 Also, the fields prepared for this `annotation class` can be used from the deserializer.
 
 ```kotlin
@@ -187,7 +215,7 @@ annotation class LocalDateTimeDeserializer(val pattern: String = "yyyy-MM-dd'T'H
 ```
 
 ##### deserializer
-Deserializer is created by inheriting `AbstractKColumnDeserializer`.
+Deserializer is created by inheriting `AbstractKColumnDeserializer`.  
 The meaning of each type parameter is as follows.
 
 - `A`: `Annotation class` (`LocalDateTimeDeserializer` in this example)
@@ -218,6 +246,39 @@ class LocalDateTimeDeserializerImpl(
         }
     }
 }
+```
+
+### Use default arguments
+`KRowMapper` supports `default arguments`.  
+`Default arguments` are available in the following situations:
+
+- When not referring to the acquisition result
+- When the acquisition result is `null`
+
+As of `KRowMapper` 0.8, it does not support the use of `default argument` when columns cannot be obtained.
+
+#### When not referring to the acquisition result
+When the `KUseDefaultArgument` `annotation` is added to the parameter,
+ the `default argument` can be used forcibly without referring to the obtained result.
+
+```kotlin
+data class Dst(val fooId: Int, @param:KUseDefaultArgument val barValue: String = "default")
+```
+
+#### When the acquisition result is null
+When `KParameterRequireNonNull` `annotation` is given to a parameter,
+ the default argument can be used if the obtained result is `null`.
+
+```kotlin
+data class Dst(val fooId: Int, @param:KParameterRequireNonNull val barValue: String = "default")
+```
+
+### Parameter aliasing
+In `KRowMapper`, the column name of the acquisition target can be specified by giving the `KParameterAlias` `annotation` to the `parameter`.  
+The name conversion function is applied to the name specified here.
+
+```kotlin
+data class Dst(@param:KParameterAlias("fooId") val barValue: Int)
 ```
 
 ## Installation
