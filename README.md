@@ -220,6 +220,31 @@ class LocalDateTimeDeserializerImpl(
 }
 ```
 
+### Use default arguments
+`KRowMapper` supports `default arguments`.  
+`Default arguments` are available in the following situations:
+
+- When not referring to the acquisition result
+- When the acquisition result is `null`
+
+As of `KRowMapper` 0.8, it does not support the use of `default argument` when columns cannot be obtained.
+
+#### When not referring to the acquisition result
+When the `KUseDefaultArgument` `annotation` is added to the parameter,
+ the `default argument` can be used forcibly without referring to the obtained result.
+
+```kotlin
+data class Dst(val fooId: Int, @param:KUseDefaultArgument val barValue: String = "default")
+```
+
+#### When the acquisition result is null
+When `KParameterRequireNonNull` `annotation` is given to a parameter,
+ the default argument can be used if the obtained result is `null`.
+
+```kotlin
+data class Dst(val fooId: Int, @param:KParameterRequireNonNull val barValue: String = "default")
+```
+
 ## Installation
 Published on JitPack.  
 You can use this library on `maven`, `gradle` and any other build tools.  
