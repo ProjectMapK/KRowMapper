@@ -91,8 +91,7 @@ private fun <T : Any> KClass<T>.getDeserializer(): KFunction<T>? {
             deserializerFromCompanionObject(this)
 
     return when {
-        deserializers.isEmpty() -> null
-        deserializers.size == 1 -> deserializers.single()
+        deserializers.size <= 1 -> deserializers.singleOrNull()
         else -> throw IllegalArgumentException("Find multiple deserializer from $jvmName")
     }
 }
