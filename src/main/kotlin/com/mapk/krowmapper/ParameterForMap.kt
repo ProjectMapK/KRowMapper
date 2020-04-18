@@ -62,7 +62,7 @@ internal class ParameterForMap private constructor(
     fun getObject(rs: ResultSet): Any? = objectGetter(rs)
 
     companion object {
-        fun newInstance(param: KParameter, parameterNameConverter: (String) -> String = { it }): ParameterForMap {
+        fun newInstance(param: KParameter, parameterNameConverter: (String) -> String): ParameterForMap {
             return ParameterForMap(
                 param,
                 parameterNameConverter(param.getAliasOrName()!!),
@@ -91,18 +91,14 @@ private fun <T : Any> KClass<T>.getDeserializer(): KFunction<T>? {
             deserializerFromCompanionObject(this)
 
     return when {
-        deserializers.isEmpty() -> null
-        deserializers.size == 1 -> deserializers.single()
+        deserializers.size <= 1 -> deserializers.singleOrNull()
         else -> throw IllegalArgumentException("Find multiple deserializer from $jvmName")
     }
 }
 
 private fun <T> Collection<KFunction<T>>.getDeserializerFromFunctions(): Collection<KFunction<T>> {
     return filter { it.annotations.any { annotation -> annotation is KColumnDeserializer } }
-        .map { func ->
-            func.isAccessible = true
-            func
-        }
+        .onEach { it.isAccessible = true }
 }
 
 private fun <T : Any> deserializerFromConstructors(clazz: KClass<T>): Collection<KFunction<T>> {
