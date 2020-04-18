@@ -98,10 +98,7 @@ private fun <T : Any> KClass<T>.getDeserializer(): KFunction<T>? {
 
 private fun <T> Collection<KFunction<T>>.getDeserializerFromFunctions(): Collection<KFunction<T>> {
     return filter { it.annotations.any { annotation -> annotation is KColumnDeserializer } }
-        .map { func ->
-            func.isAccessible = true
-            func
-        }
+        .onEach { it.isAccessible = true }
 }
 
 private fun <T : Any> deserializerFromConstructors(clazz: KClass<T>): Collection<KFunction<T>> {
