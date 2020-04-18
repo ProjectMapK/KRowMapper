@@ -19,55 +19,64 @@ import kotlin.reflect.full.staticFunctions
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmName
 
-internal class ParameterForMap private constructor(
-    val param: KParameter,
-    name: String,
-    parameterKClazz: KClass<*>
-) {
-    private val objectGetter: (ResultSet) -> Any?
+internal sealed class ParameterForMap {
+    abstract val param: KParameter
+    abstract val name: String
+    abstract val clazz: Class<*>
+    abstract fun getObject(rs: ResultSet): Any?
 
-    init {
-        val deserializerFromParameter = param.getDeserializer()
-        if (deserializerFromParameter != null) {
-            val deserialize = deserializerFromParameter::deserialize
-
-            objectGetter = {
-                deserialize.call(it.getObject(name, deserializerFromParameter.srcClass))
-            }
-        } else {
-            val deserializer = parameterKClazz.getDeserializer()
-
-            if (deserializer != null) {
-                val targetClass = deserializer.parameters.single().type.classifier as KClass<*>
-
-                objectGetter = {
-                    deserializer.call(it.getObject(name, targetClass.javaObjectType))
-                }
-            } else {
-                val clazz = parameterKClazz.javaObjectType
-
-                objectGetter = if (clazz.isEnum) {
-                    {
-                        EnumMapper.getEnum(clazz, it.getString(name))
-                    }
-                } else {
-                    {
-                        it.getObject(name, clazz)
-                    }
-                }
-            }
-        }
+    private class Plain(
+        override val param: KParameter,
+        override val name: String,
+        override val clazz: Class<*>
+    ) : ParameterForMap() {
+        override fun getObject(rs: ResultSet): Any? = rs.getObject(name, clazz)
     }
 
-    fun getObject(rs: ResultSet): Any? = objectGetter(rs)
+    private class Enum(
+        override val param: KParameter,
+        override val name: String,
+        override val clazz: Class<*>
+    ) : ParameterForMap() {
+        override fun getObject(rs: ResultSet): Any? = EnumMapper.getEnum(clazz, rs.getString(name))
+    }
+
+    private class Deserializer(
+        override val param: KParameter,
+        override val name: String,
+        override val clazz: Class<*>,
+        private val deserializer: KFunction<*>
+    ) : ParameterForMap() {
+        constructor(
+            param: KParameter,
+            name: String,
+            deserializer: AbstractKColumnDeserializer<*, *, *>
+        ) : this(param, name, deserializer.srcClass, deserializer::deserialize)
+
+        override fun getObject(rs: ResultSet): Any? = deserializer.call(rs.getObject(name, clazz))
+    }
 
     companion object {
         fun newInstance(param: KParameter, parameterNameConverter: (String) -> String): ParameterForMap {
-            return ParameterForMap(
-                param,
-                parameterNameConverter(param.getAliasOrName()!!),
-                param.type.classifier as KClass<*>
-            )
+            val name = parameterNameConverter(param.getAliasOrName()!!)
+
+            param.getDeserializer()?.let {
+                return Deserializer(param, name, it)
+            }
+
+            val parameterKClazz = param.type.classifier as KClass<*>
+
+            parameterKClazz.getDeserializer()?.let {
+                val targetClass = (it.parameters.single().type.classifier as KClass<*>).javaObjectType
+                return Deserializer(param, name, targetClass, it)
+            }
+
+            return parameterKClazz.javaObjectType.let {
+                when (it.isEnum) {
+                    true -> Enum(param, name, it)
+                    false -> Plain(param, name, it)
+                }
+            }
         }
     }
 }
