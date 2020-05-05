@@ -3,7 +3,7 @@ package com.mapk.krowmapper
 import com.mapk.annotations.KColumnDeserializer
 import com.mapk.core.EnumMapper
 import com.mapk.core.KFunctionWithInstance
-import com.mapk.core.getAliasOrName
+import com.mapk.core.ValueParameter
 import com.mapk.deserialization.AbstractKColumnDeserializer
 import com.mapk.deserialization.KColumnDeserializeBy
 import java.lang.IllegalArgumentException
@@ -51,24 +51,20 @@ internal sealed class ParameterForMap {
     }
 
     companion object {
-        fun newInstance(param: KParameter, parameterNameConverter: (String) -> String): ParameterForMap {
-            val name = parameterNameConverter(param.getAliasOrName()!!)
-
+        fun <T : Any> newInstance(param: ValueParameter<T>): ParameterForMap {
             param.getDeserializer()?.let {
-                return Deserializer(param, name, it)
+                return Deserializer(param.name, it)
             }
 
-            val parameterKClazz = param.type.classifier as KClass<*>
-
-            parameterKClazz.getDeserializer()?.let {
+            param.requiredClazz.getDeserializer()?.let {
                 val targetClass = (it.parameters.single().type.classifier as KClass<*>).javaObjectType
-                return Deserializer(param, name, targetClass, it)
+                return Deserializer(param.name, targetClass, it)
             }
 
-            return parameterKClazz.javaObjectType.let {
+            return param.requiredClazz.javaObjectType.let {
                 when (it.isEnum) {
-                    true -> Enum(param, name, it)
-                    false -> Plain(param, name, it)
+                    true -> Enum(param.name, it)
+                    false -> Plain(param.name, it)
                 }
             }
         }
