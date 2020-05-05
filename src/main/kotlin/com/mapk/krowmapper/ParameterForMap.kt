@@ -10,7 +10,6 @@ import java.lang.IllegalArgumentException
 import java.sql.ResultSet
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
@@ -20,13 +19,11 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmName
 
 internal sealed class ParameterForMap {
-    abstract val param: KParameter
     abstract val name: String
     abstract val clazz: Class<*>
     abstract fun getObject(rs: ResultSet): Any?
 
     private class Plain(
-        override val param: KParameter,
         override val name: String,
         override val clazz: Class<*>
     ) : ParameterForMap() {
@@ -34,7 +31,6 @@ internal sealed class ParameterForMap {
     }
 
     private class Enum(
-        override val param: KParameter,
         override val name: String,
         override val clazz: Class<*>
     ) : ParameterForMap() {
@@ -42,16 +38,14 @@ internal sealed class ParameterForMap {
     }
 
     private class Deserializer(
-        override val param: KParameter,
         override val name: String,
         override val clazz: Class<*>,
         private val deserializer: KFunction<*>
     ) : ParameterForMap() {
         constructor(
-            param: KParameter,
             name: String,
             deserializer: AbstractKColumnDeserializer<*, *, *>
-        ) : this(param, name, deserializer.srcClass, deserializer::deserialize)
+        ) : this(name, deserializer.srcClass, deserializer::deserialize)
 
         override fun getObject(rs: ResultSet): Any? = deserializer.call(rs.getObject(name, clazz))
     }
