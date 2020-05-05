@@ -22,12 +22,10 @@ class KRowMapper<T : Any> private constructor(
         .map { ParameterForMap.newInstance(it) }
 
     override fun mapRow(rs: ResultSet, rowNum: Int): T {
-        val argumentBucket = function.getArgumentBucket()
+        val adaptor = function.getArgumentAdaptor()
 
-        parameters.forEach { param ->
-            argumentBucket.putIfAbsent(param.param, param.getObject(rs))
-        }
+        parameters.forEach { adaptor.putIfAbsent(it.name, it.getObject(rs)) }
 
-        return function.call(argumentBucket)
+        return function.call(adaptor)
     }
 }
