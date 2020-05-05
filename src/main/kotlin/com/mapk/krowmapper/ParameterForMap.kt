@@ -81,7 +81,8 @@ internal sealed class ParameterForMap {
     }
 }
 
-private fun KParameter.getDeserializer(): AbstractKColumnDeserializer<*, *, *>? {
+@Suppress("UNCHECKED_CAST")
+private fun <T : Any> ValueParameter<T>.getDeserializer(): AbstractKColumnDeserializer<*, *, T>? {
     val deserializers = this.annotations.mapNotNull { paramAnnotation ->
         paramAnnotation.annotationClass
             .findAnnotation<KColumnDeserializeBy>()
@@ -89,9 +90,9 @@ private fun KParameter.getDeserializer(): AbstractKColumnDeserializer<*, *, *>? 
     }
 
     if (1 < deserializers.size)
-        throw IllegalArgumentException("Find multiple deserializer from ${(this.type.classifier as KClass<*>).jvmName}")
+        throw IllegalArgumentException("Find multiple deserializer from ${(this.requiredClazz).jvmName}")
 
-    return deserializers.singleOrNull()
+    return deserializers.singleOrNull() as AbstractKColumnDeserializer<*, *, T>?
 }
 
 private fun <T : Any> KClass<T>.getDeserializer(): KFunction<T>? {
