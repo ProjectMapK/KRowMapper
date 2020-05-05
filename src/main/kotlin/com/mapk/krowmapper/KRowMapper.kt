@@ -10,15 +10,14 @@ import kotlin.reflect.KParameter
 import org.springframework.jdbc.core.RowMapper
 
 class KRowMapper<T : Any> private constructor(
-    private val function: KFunctionForCall<T>,
-    parameterNameConverter: (String) -> String
+    private val function: KFunctionForCall<T>
 ) : RowMapper<T> {
-    constructor(function: KFunction<T>, propertyNameConverter: (String) -> String = { it }) : this(
-        KFunctionForCall(function), propertyNameConverter
+    constructor(function: KFunction<T>, parameterNameConverter: (String) -> String = { it }) : this(
+        KFunctionForCall(function, parameterNameConverter)
     )
 
-    constructor(clazz: KClass<T>, propertyNameConverter: (String) -> String = { it }) : this(
-        clazz.toKConstructor(), propertyNameConverter
+    constructor(clazz: KClass<T>, parameterNameConverter: (String) -> String = { it }) : this(
+        clazz.toKConstructor(parameterNameConverter)
     )
 
     private val parameters: List<ParameterForMap> = function.parameters
