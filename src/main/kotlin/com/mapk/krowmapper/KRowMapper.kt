@@ -1,12 +1,10 @@
 package com.mapk.krowmapper
 
 import com.mapk.core.KFunctionForCall
-import com.mapk.core.isUseDefaultArgument
 import com.mapk.core.toKConstructor
 import java.sql.ResultSet
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
 import org.springframework.jdbc.core.RowMapper
 
 class KRowMapper<T : Any> private constructor(
@@ -20,9 +18,8 @@ class KRowMapper<T : Any> private constructor(
         clazz.toKConstructor(parameterNameConverter)
     )
 
-    private val parameters: List<ParameterForMap> = function.parameters
-        .filter { it.kind != KParameter.Kind.INSTANCE && !it.isUseDefaultArgument() }
-        .map { ParameterForMap.newInstance(it, parameterNameConverter) }
+    private val parameters: List<ParameterForMap> = function.requiredParameters.values
+        .map { ParameterForMap.newInstance(it) }
 
     override fun mapRow(rs: ResultSet, rowNum: Int): T {
         val argumentBucket = function.getArgumentBucket()
