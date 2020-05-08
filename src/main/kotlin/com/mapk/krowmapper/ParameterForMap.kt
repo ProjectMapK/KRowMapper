@@ -3,14 +3,13 @@ package com.mapk.krowmapper
 import com.mapk.annotations.KColumnDeserializer
 import com.mapk.core.EnumMapper
 import com.mapk.core.KFunctionWithInstance
-import com.mapk.core.getAliasOrName
+import com.mapk.core.ValueParameter
 import com.mapk.deserialization.AbstractKColumnDeserializer
 import com.mapk.deserialization.KColumnDeserializeBy
 import java.lang.IllegalArgumentException
 import java.sql.ResultSet
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.KParameter
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.functions
@@ -20,13 +19,11 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmName
 
 internal sealed class ParameterForMap {
-    abstract val param: KParameter
     abstract val name: String
     abstract val clazz: Class<*>
     abstract fun getObject(rs: ResultSet): Any?
 
     private class Plain(
-        override val param: KParameter,
         override val name: String,
         override val clazz: Class<*>
     ) : ParameterForMap() {
@@ -34,7 +31,6 @@ internal sealed class ParameterForMap {
     }
 
     private class Enum(
-        override val param: KParameter,
         override val name: String,
         override val clazz: Class<*>
     ) : ParameterForMap() {
@@ -42,46 +38,41 @@ internal sealed class ParameterForMap {
     }
 
     private class Deserializer(
-        override val param: KParameter,
         override val name: String,
         override val clazz: Class<*>,
         private val deserializer: KFunction<*>
     ) : ParameterForMap() {
         constructor(
-            param: KParameter,
             name: String,
             deserializer: AbstractKColumnDeserializer<*, *, *>
-        ) : this(param, name, deserializer.srcClass, deserializer::deserialize)
+        ) : this(name, deserializer.srcClass, deserializer::deserialize)
 
         override fun getObject(rs: ResultSet): Any? = deserializer.call(rs.getObject(name, clazz))
     }
 
     companion object {
-        fun newInstance(param: KParameter, parameterNameConverter: (String) -> String): ParameterForMap {
-            val name = parameterNameConverter(param.getAliasOrName()!!)
-
+        fun <T : Any> newInstance(param: ValueParameter<T>): ParameterForMap {
             param.getDeserializer()?.let {
-                return Deserializer(param, name, it)
+                return Deserializer(param.name, it)
             }
 
-            val parameterKClazz = param.type.classifier as KClass<*>
-
-            parameterKClazz.getDeserializer()?.let {
+            param.requiredClazz.getDeserializer()?.let {
                 val targetClass = (it.parameters.single().type.classifier as KClass<*>).javaObjectType
-                return Deserializer(param, name, targetClass, it)
+                return Deserializer(param.name, targetClass, it)
             }
 
-            return parameterKClazz.javaObjectType.let {
+            return param.requiredClazz.javaObjectType.let {
                 when (it.isEnum) {
-                    true -> Enum(param, name, it)
-                    false -> Plain(param, name, it)
+                    true -> Enum(param.name, it)
+                    false -> Plain(param.name, it)
                 }
             }
         }
     }
 }
 
-private fun KParameter.getDeserializer(): AbstractKColumnDeserializer<*, *, *>? {
+@Suppress("UNCHECKED_CAST")
+private fun <T : Any> ValueParameter<T>.getDeserializer(): AbstractKColumnDeserializer<*, *, T>? {
     val deserializers = this.annotations.mapNotNull { paramAnnotation ->
         paramAnnotation.annotationClass
             .findAnnotation<KColumnDeserializeBy>()
@@ -89,9 +80,9 @@ private fun KParameter.getDeserializer(): AbstractKColumnDeserializer<*, *, *>? 
     }
 
     if (1 < deserializers.size)
-        throw IllegalArgumentException("Find multiple deserializer from ${(this.type.classifier as KClass<*>).jvmName}")
+        throw IllegalArgumentException("Find multiple deserializer from ${(this.requiredClazz).jvmName}")
 
-    return deserializers.singleOrNull()
+    return deserializers.singleOrNull() as AbstractKColumnDeserializer<*, *, T>?
 }
 
 private fun <T : Any> KClass<T>.getDeserializer(): KFunction<T>? {
