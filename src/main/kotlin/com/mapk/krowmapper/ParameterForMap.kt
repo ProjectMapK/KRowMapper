@@ -4,6 +4,7 @@ import com.mapk.annotations.KColumnDeserializer
 import com.mapk.core.EnumMapper
 import com.mapk.core.KFunctionWithInstance
 import com.mapk.core.ValueParameter
+import com.mapk.core.getKClass
 import com.mapk.deserialization.AbstractKColumnDeserializer
 import com.mapk.deserialization.KColumnDeserializeBy
 import java.lang.IllegalArgumentException
@@ -57,7 +58,7 @@ internal sealed class ParameterForMap {
             }
 
             param.requiredClazz.getDeserializer()?.let {
-                val targetClass = (it.parameters.single().type.classifier as KClass<*>).javaObjectType
+                val targetClass = it.parameters.single().getKClass().javaObjectType
                 return Deserializer(param.name, targetClass, it)
             }
 
