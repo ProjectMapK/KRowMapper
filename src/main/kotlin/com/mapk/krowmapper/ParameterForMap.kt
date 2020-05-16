@@ -4,15 +4,16 @@ import com.mapk.annotations.KColumnDeserializer
 import com.mapk.core.EnumMapper
 import com.mapk.core.KFunctionWithInstance
 import com.mapk.core.ValueParameter
+import com.mapk.core.getAnnotatedFunctions
+import com.mapk.core.getAnnotatedFunctionsFromCompanionObject
+import com.mapk.core.getKClass
 import com.mapk.deserialization.AbstractKColumnDeserializer
 import com.mapk.deserialization.KColumnDeserializeBy
 import java.lang.IllegalArgumentException
 import java.sql.ResultSet
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.functions
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.full.staticFunctions
 import kotlin.reflect.jvm.isAccessible
@@ -57,7 +58,7 @@ internal sealed class ParameterForMap {
             }
 
             param.requiredClazz.getDeserializer()?.let {
-                val targetClass = (it.parameters.single().type.classifier as KClass<*>).javaObjectType
+                val targetClass = it.parameters.single().getKClass().javaObjectType
                 return Deserializer(param.name, targetClass, it)
             }
 
@@ -97,8 +98,7 @@ private fun <T : Any> KClass<T>.getDeserializer(): KFunction<T>? {
 }
 
 private fun <T> Collection<KFunction<T>>.getDeserializerFromFunctions(): Collection<KFunction<T>> {
-    return filter { it.annotations.any { annotation -> annotation is KColumnDeserializer } }
-        .onEach { it.isAccessible = true }
+    return getAnnotatedFunctions<KColumnDeserializer, T>().onEach { it.isAccessible = true }
 }
 
 private fun <T : Any> deserializerFromConstructors(clazz: KClass<T>): Collection<KFunction<T>> {
@@ -113,14 +113,9 @@ private fun <T : Any> deserializerFromStaticMethods(clazz: KClass<T>): Collectio
 
 @Suppress("UNCHECKED_CAST")
 private fun <T : Any> deserializerFromCompanionObject(clazz: KClass<T>): Collection<KFunction<T>> {
-    return clazz.companionObjectInstance?.let { companionObject ->
-        companionObject::class.functions
-            .filter { it.annotations.any { annotation -> annotation is KColumnDeserializer } }
-            .map { function ->
-                KFunctionWithInstance(
-                    function,
-                    companionObject
-                ) as KFunction<T>
-            }.toSet()
+    return clazz.getAnnotatedFunctionsFromCompanionObject<KColumnDeserializer>()?.let { (instance, functions) ->
+        functions.map {
+            KFunctionWithInstance(it, instance) as KFunction<T>
+        }
     } ?: emptySet()
 }
