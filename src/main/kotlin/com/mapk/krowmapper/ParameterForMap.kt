@@ -4,6 +4,7 @@ import com.mapk.annotations.KColumnDeserializer
 import com.mapk.core.EnumMapper
 import com.mapk.core.KFunctionWithInstance
 import com.mapk.core.ValueParameter
+import com.mapk.core.getAnnotatedFunctions
 import com.mapk.core.getKClass
 import com.mapk.deserialization.AbstractKColumnDeserializer
 import com.mapk.deserialization.KColumnDeserializeBy
@@ -98,8 +99,7 @@ private fun <T : Any> KClass<T>.getDeserializer(): KFunction<T>? {
 }
 
 private fun <T> Collection<KFunction<T>>.getDeserializerFromFunctions(): Collection<KFunction<T>> {
-    return filter { it.annotations.any { annotation -> annotation is KColumnDeserializer } }
-        .onEach { it.isAccessible = true }
+    return getAnnotatedFunctions<KColumnDeserializer, T>().onEach { it.isAccessible = true }
 }
 
 private fun <T : Any> deserializerFromConstructors(clazz: KClass<T>): Collection<KFunction<T>> {
