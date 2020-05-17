@@ -23,7 +23,7 @@ class KRowMapper<T : Any> private constructor(
     override fun mapRow(rs: ResultSet, rowNum: Int): T {
         val adaptor = function.getArgumentAdaptor()
 
-        parameters.forEach { adaptor.putIfAbsent(it.name, it.getObject(rs)) }
+        parameters.forEach { adaptor.forcePut(it.name, it.getObject(rs)) }
 
         return function.call(adaptor)
     }
