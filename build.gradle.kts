@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.mapk"
-version = "0.13"
+version = "0.14"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -30,7 +30,7 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation(kotlin("reflect"))
-    api("com.github.ProjectMapK:Shared:0.15")
+    api("com.github.ProjectMapK:Shared:0.16")
     // 使うのはRowMapperのみなため他はexclude、またバージョンそのものは使う相手に合わせるためcompileOnly
     compileOnly(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE") {
         exclude(module = "spring-beans")
@@ -43,7 +43,7 @@ dependencies {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     // https://mvnrepository.com/artifact/io.mockk/mockk
-    testImplementation("io.mockk:mockk:1.9.3")
+    testImplementation("io.mockk:mockk:1.10.0")
 
     // テスト時には無いと困るため、別口でimplementation
     testImplementation(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE")
