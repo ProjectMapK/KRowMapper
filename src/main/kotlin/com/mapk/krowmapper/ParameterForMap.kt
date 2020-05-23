@@ -23,8 +23,8 @@ internal sealed class ParameterForMap<S, D> {
     abstract val name: String
     abstract fun getObject(rs: ResultSet): D?
 
-    private class Plain(override val name: String, override val clazz: Class<*>) : ParameterForMap() {
-        override fun getObject(rs: ResultSet): Any? = rs.getObject(name, clazz)
+    private class Plain<T>(override val name: String, val requiredClazz: Class<T>) : ParameterForMap<T, T>() {
+        override fun getObject(rs: ResultSet): T? = rs.getObject(name, requiredClazz)
     }
 
     private class Enum(override val name: String, override val clazz: Class<*>) : ParameterForMap() {
