@@ -16,7 +16,8 @@ class KRowMapper<T : Any> private constructor(private val function: KFunctionFor
         clazz.toKConstructor(parameterNameConverter)
     )
 
-    private val parameters: List<ParameterForMap> = function.requiredParameters.map { ParameterForMap.newInstance(it) }
+    private val parameters: List<ParameterForMap<*, *>> =
+        function.requiredParameters.map { ParameterForMap.newInstance(it) }
 
     override fun mapRow(rs: ResultSet, rowNum: Int): T {
         val adaptor = function.getArgumentAdaptor()
