@@ -27,8 +27,8 @@ internal sealed class ParameterForMap<S, D> {
         override fun getObject(rs: ResultSet): T? = rs.getObject(name, requiredClazz)
     }
 
-    private class Enum(override val name: String, override val clazz: Class<*>) : ParameterForMap() {
-        override fun getObject(rs: ResultSet): Any? = EnumMapper.getEnum(clazz, rs.getString(name))
+    private class Enum<D>(override val name: String, val enumClazz: Class<D>) : ParameterForMap<String, D>() {
+        override fun getObject(rs: ResultSet): D? = EnumMapper.getEnum(enumClazz, rs.getString(name))
     }
 
     private class Deserializer(
