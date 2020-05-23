@@ -21,7 +21,6 @@ import kotlin.reflect.jvm.jvmName
 
 internal sealed class ParameterForMap<S, D> {
     abstract val name: String
-    abstract val clazz: Class<S>
     abstract fun getObject(rs: ResultSet): D?
 
     private class Plain(override val name: String, override val clazz: Class<*>) : ParameterForMap() {
