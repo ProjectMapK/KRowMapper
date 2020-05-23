@@ -45,7 +45,7 @@ internal sealed class ParameterForMap<S, D> {
     }
 
     companion object {
-        fun <T : Any> newInstance(param: ValueParameter<T>): ParameterForMap {
+        fun <T : Any> newInstance(param: ValueParameter<T>): ParameterForMap<*, T> {
             param.getDeserializer()?.let {
                 return Deserializer(param.name, it)
             }
