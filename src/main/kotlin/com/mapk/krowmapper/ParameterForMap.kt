@@ -111,5 +111,5 @@ private fun <T : Any> deserializerFromCompanionObject(clazz: KClass<T>): Collect
         functions.map {
             KFunctionWithInstance(it, instance) as KFunction<T>
         }
-    } ?: emptySet()
+    } ?: emptyList()
 }
