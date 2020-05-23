@@ -43,7 +43,7 @@ dependencies {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     // https://mvnrepository.com/artifact/io.mockk/mockk
-    testImplementation("io.mockk:mockk:1.9.3")
+    testImplementation("io.mockk:mockk:1.10.0")
 
     // テスト時には無いと困るため、別口でimplementation
     testImplementation(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE")
