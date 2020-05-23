@@ -19,10 +19,10 @@ import kotlin.reflect.full.staticFunctions
 import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.jvmName
 
-internal sealed class ParameterForMap {
+internal sealed class ParameterForMap<S, D> {
     abstract val name: String
-    abstract val clazz: Class<*>
-    abstract fun getObject(rs: ResultSet): Any?
+    abstract val clazz: Class<S>
+    abstract fun getObject(rs: ResultSet): D?
 
     private class Plain(override val name: String, override val clazz: Class<*>) : ParameterForMap() {
         override fun getObject(rs: ResultSet): Any? = rs.getObject(name, clazz)
