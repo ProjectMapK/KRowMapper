@@ -31,17 +31,17 @@ internal sealed class ParameterForMap<S, D> {
         override fun getObject(rs: ResultSet): D? = EnumMapper.getEnum(enumClazz, rs.getString(name))
     }
 
-    private class Deserializer(
+    private class Deserializer<S : Any, D>(
         override val name: String,
-        override val clazz: Class<*>,
-        private val deserializer: KFunction<*>
-    ) : ParameterForMap() {
+        val srcClazz: Class<S>,
+        private val deserializer: KFunction<D?>
+    ) : ParameterForMap<S, D>() {
         constructor(
             name: String,
-            deserializer: AbstractKColumnDeserializer<*, *, *>
+            deserializer: AbstractKColumnDeserializer<*, S, D>
         ) : this(name, deserializer.srcClass, deserializer::deserialize)
 
-        override fun getObject(rs: ResultSet): Any? = deserializer.call(rs.getObject(name, clazz))
+        override fun getObject(rs: ResultSet): D? = deserializer.call(rs.getObject(name, srcClazz))
     }
 
     companion object {
