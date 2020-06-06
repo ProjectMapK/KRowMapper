@@ -10,4 +10,33 @@ KRowMapper
 - リフレクションを用いた関数呼び出しベースの安全なマッピング
 - 豊富なデシリアライズ機能による柔軟なマッピング
 
+## デモコード
+手動でマッピングコードを書いた場合と`KRowMapper`を用いた場合を比較します。  
+手動で書く場合フィールド件数が多ければ多いほど記述がかさみますが、`KRowMapper`を用いることで殆どコードを書かずにマッピングを行えます。
 
+```kotlin
+// マップ対象クラス
+data class Dst(
+    foo: String,
+    bar: String,
+    baz: Int?,
+
+    ...
+
+)
+
+// 手動でRowMapperを書いた場合
+val dst: Dst = jdbcTemplate.query(query) { rs, _ ->
+    Dst(
+            rs.getString("foo"),
+            rs.getString("bar"),
+            rs.getInt("baz"),
+
+            ...
+
+    )
+}
+
+// KRowMapperを用いた場合
+val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst))
+```
