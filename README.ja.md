@@ -12,10 +12,10 @@ KRowMapper
 
 ## デモコード
 手動でマッピングコードを書いた場合と`KRowMapper`を用いた場合を比較します。  
-手動で書く場合フィールド件数が多ければ多いほど記述がかさみますが、`KRowMapper`を用いることで殆どコードを書かずにマッピングを行えます。  
+手動で書く場合引数が多ければ多いほど記述がかさみますが、`KRowMapper`を用いることで殆どコードを書かずにマッピングを行えます。  
 また、外部の設定ファイルは一切必要ありません。
 
-ただし、フィールドの命名規則とDBのカラムの命名規則が異なる場合は命名変換関数を渡す必要が有る点にご注意ください（後述）。
+ただし、引数の命名規則とDBのカラムの命名規則が異なる場合は命名変換関数を渡す必要が有る点にご注意ください（後述）。
 
 ```kotlin
 // マップ対象クラス
@@ -90,7 +90,7 @@ val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst, /* 必要に応じた
 `KRowMapper`は呼び出し対象の`method reference(KFunction)`、またはマッピング先の`KClass`から初期化できます。  
 よりプレーンな`Kotlin`に近い書き方をしたい場合には、呼び出し対象メソッドで全ての初期化処理を書くことをお勧めします。
 
-また、`KRowMapper`はデフォルトではフィールドの命名によってカラムとの対応を見るため、「フィールドがキャメルケースでカラムはスネークケース」というような場合、パラメータ名を変換する関数も渡す必要が有ります。
+また、`KRowMapper`はデフォルトでは引数名によってカラムとの対応を見るため、「引数がキャメルケースでカラムはスネークケース」というような場合、引数名を変換する関数も渡す必要が有ります。
 
 ### method reference(KFunction)からの初期化
 `KRowMapper`は`method reference`から初期化できます。
@@ -157,7 +157,7 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
 ```
 
 ### パラメータ名の変換
-`KRowMapper`は、デフォルトではフィールド名に対応するカラムをそのまま探すという挙動になります。
+`KRowMapper`は、デフォルトでは引数名に対応するカラムをそのまま探すという挙動になります。
 
 ```kotlin
 data class Dst(
@@ -179,7 +179,7 @@ val rowMapper: RowMapper<Dst> = { rs, _ ->
 }
 ```
 
-一方、フィールドの命名規則がキャメルケースかつDBのカラムの命名規則がスネークケースというような場合、このままでは一致を見ることができません。  
+一方、引数の命名規則がキャメルケースかつDBのカラムの命名規則がスネークケースというような場合、このままでは一致を見ることができません。  
 このような状況では`KRowMapper`の初期化時に命名変換関数を渡す必要が有ります。
 
 ```kotlin
@@ -359,7 +359,7 @@ data class InnerDst(val fooFoo: Int, val barBar: String)
 data class Dst(val bazBaz: InnerDst, val quxQux: LocalDateTime)
 ```
 
-`DB`のカラム名がスネークケースであり、フィールド名をプレフィックスに指定する場合、以下のように付与します。  
+`DB`のカラム名がスネークケースであり、引数名をプレフィックスに指定する場合、以下のように付与します。  
 ここで、`KParameterFlatten`を指定されたクラスは、前述の`KConstructor`アノテーションで指定した関数またはプライマリコンストラクタから初期化されます。
 
 ```kotlin
@@ -379,7 +379,7 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { /* キャメル -> スネ
 
 **fieldNameToPrefix**
 `KParameterFlatten`アノテーションはデフォルトでは引数名をプレフィックスに置いた名前で一致を見ようとします。  
-フィールド名をプレフィックスに付けたくない場合は`fieldNameToPrefix`オプションに`false`を指定します。
+引数名をプレフィックスに付けたくない場合は`fieldNameToPrefix`オプションに`false`を指定します。
 
 ```kotlin
 data class InnerDst(val fooFoo: Int, val barBar: String)
@@ -396,5 +396,5 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { /* キャメル -> スネ
 `fieldNameToPrefix = false`を指定した場合、`nameJoiner`オプションは無視されます。
 
 **nameJoiner**
-`nameJoiner`はパラメータ名とパラメータ名の結合方法の指定で、デフォルトでは`camelCase`が指定されており、`snake_case`と`kebab-case`のサポートも有ります。
+`nameJoiner`は引数名と引数名の結合方法の指定で、デフォルトでは`camelCase`が指定されており、`snake_case`と`kebab-case`のサポートも有ります。
 `NameJoiner`クラスを継承した`object`を作成することで自作することもできます。
