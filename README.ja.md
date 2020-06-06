@@ -269,3 +269,83 @@ data class Dst(
 
 デシリアライズアノテーションの自作はデシリアライズアノテーションとデシリアライザーの組を定義することで行います。  
 例として`String`から`LocalDateTime`にデシリアライズを行う`LocalDateTimeDeserializer`の作成の様子を示します。
+
+##### デシリアライズアノテーションを定義する
+`@Target(AnnotationTarget.VALUE_PARAMETER)`と`KColumnDeserializeBy`アノテーション、他幾つかのアノテーションを付与することで、デシリアライズアノテーションを定義できます。
+
+`KColumnDeserializeBy`アノテーションの引数は、後述するデシリアライザーの`KClass`を渡します。  
+この例では`LocalDateTimeDeserializerImpl`がそれです。
+
+また、この例ではアノテーションに引数を定義していますが、この値はデシリアライザーから参照することができます。
+
+```kotlin
+@Retention(AnnotationRetention.RUNTIME)
+@MustBeDocumented
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@KColumnDeserializeBy(LocalDateTimeDeserializerImpl::class)
+annotation class LocalDateTimeDeserializer(val pattern: String = "yyyy-MM-dd'T'HH:mm:ss")
+```
+
+##### デシリアライザーを定義する
+
+デシリアライザーは`AbstractKColumnDeserializer<A, S, D>`を継承して定義します。  
+ジェネリクス`A`,`S`,`D`はそれぞれ以下の意味が有ります。
+- `A`: デシリアライズアノテーションの`Type`
+- `S`: デシリアライズ前の`Type`
+- `D`: デシリアライズ後の`Type`
+
+```kotlin
+class LocalDateTimeDeserializerImpl(
+    annotation: LocalDateTimeDeserializer
+) : AbstractKColumnDeserializer<LocalDateTimeDeserializer, String, LocalDateTime>(annotation) {
+    private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(annotation.pattern)
+
+    override val srcClass: Class<String> = String::class.javaObjectType
+
+    override fun deserialize(source: String?): LocalDateTime? {
+        return source?.let {
+            LocalDateTime.parse(it, formatter)
+        }
+    }
+}
+```
+
+デシリアライザーのプライマリコンストラクタの引数はデシリアライズアノテーションのみ取る必要が有ります。  
+これは`KRowMapper`の初期化時に呼び出されます。
+
+例の通り、アノテーションに定義した引数は適宜参照することができます。
+
+##### 付与する
+ここまでで定義したデシリアライズアノテーションとデシリアライザーをまとめて書くと以下のようになります。
+
+```kotlin
+@Retention(AnnotationRetention.RUNTIME)
+@MustBeDocumented
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@KColumnDeserializeBy(LocalDateTimeDeserializerImpl::class)
+annotation class LocalDateTimeDeserializer(val pattern: String = "yyyy-MM-dd'T'HH:mm:ss")
+
+class LocalDateTimeDeserializerImpl(
+    annotation: LocalDateTimeDeserializer
+) : AbstractKColumnDeserializer<LocalDateTimeDeserializer, String, LocalDateTime>(annotation) {
+    private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(annotation.pattern)
+
+    override val srcClass: Class<String> = String::class.javaObjectType
+
+    override fun deserialize(source: String?): LocalDateTime? {
+        return source?.let {
+            LocalDateTime.parse(it, formatter)
+        }
+    }
+}
+```
+
+これを付与すると以下のようになります。  
+`pattern`には任意の引数が渡せるため、柔軟性が高いことが分かります。
+
+```kotlin
+data class Dst(
+        @LocalDateTimeDeserializer(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+        val createTime: LocalDateTime
+)
+```
