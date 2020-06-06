@@ -220,3 +220,44 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class, parameterNameConverter)
 1. `KColumnDeserializer`アノテーションを利用したデシリアライズ
 2. デシリアライズアノテーションを自作してのデシリアライズ
 3. 複数引数からのデシリアライズ
+
+#### KColumnDeserializerアノテーションを利用したデシリアライズ
+自作のクラスで、かつ単一引数から初期化できる場合、`KColumnDeserializer`アノテーションを用いてデシリアライズできます。  
+`KColumnDeserializer`アノテーションは、コンストラクタ、もしくは`companion object`に定義したファクトリーメソッドに対して付与できます。
+
+```kotlin
+// プライマリーコンストラクタに付与した場合
+data class FooId @KColumnDeserializer constructor(val id: Int)
+```
+
+```kotlin
+// セカンダリーコンストラクタに付与した場合
+data class FooId(val id: Int) {
+    @KColumnDeserializer
+    constructor(id: String) : this(id.toInt())
+}
+```
+
+```kotlin
+// ファクトリーメソッドに付与した場合
+data class FooId(val id: Int) {
+    companion object {
+        @KColumnDeserializer
+        fun of(id: String): FooId = FooId(id.toInt())
+    }
+}
+```
+
+`KColumnDeserializer`アノテーションが設定されているクラスは、特別な記述をしなくてもパラメータとしてマッピングが可能です。
+
+```kotlin
+// fooIdにKColumnDeserializerが付与されていればDstでは何もせずに正常にマッピングができる
+data class Dst(
+    fooId: FooId,
+    bar: String,
+    baz: Int?,
+
+    ...
+
+)
+```
