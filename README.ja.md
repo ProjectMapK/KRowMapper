@@ -349,3 +349,52 @@ data class Dst(
         val createTime: LocalDateTime
 )
 ```
+
+#### 複数引数からのデシリアライズ
+以下のように、`InnerDst`が複数引数を要求している場合、そのままでは`KRwoMapper`を用いて`Dst`をマッピングすることはできません。  
+このように複数引数を要求するようなクラスは、`KParameterFlatten`アノテーションを用いることでデシリアライズできます。
+
+```kotlin
+data class InnerDst(val fooFoo: Int, val barBar: String)
+data class Dst(val bazBaz: InnerDst, val quxQux: LocalDateTime)
+```
+
+`DB`のカラム名がスネークケースであり、フィールド名をプレフィックスに指定する場合、以下のように付与します。  
+ここで、`KParameterFlatten`を指定されたクラスは、前述の`KConstructor`アノテーションで指定した関数またはプライマリコンストラクタから初期化されます。
+
+```kotlin
+data class InnerDst(val fooFoo: Int, val barBar: String)
+data class Dst(
+    @KParameterFlatten(nameJoiner = NameJoiner.Snake::class)
+    val bazBaz: InnerDst,
+    val quxQux: LocalDateTime
+)
+
+// baz_baz_foo_foo, baz_baz_bar_bar, qux_quxの3引数が要求される
+val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { /* キャメル -> スネークの命名変換関数 */ }
+```
+
+##### KParameterFlattenアノテーションのオプション
+`KParameterFlatten`アノテーションはネストしたクラスの引数名の扱いについて2つのオプションを持ちます。
+
+**fieldNameToPrefix**
+`KParameterFlatten`アノテーションはデフォルトでは引数名をプレフィックスに置いた名前で一致を見ようとします。  
+フィールド名をプレフィックスに付けたくない場合は`fieldNameToPrefix`オプションに`false`を指定します。
+
+```kotlin
+data class InnerDst(val fooFoo: Int, val barBar: String)
+data class Dst(
+    @KParameterFlatten(fieldNameToPrefix = false)
+    val bazBaz: InnerDst,
+    val quxQux: LocalDateTime
+)
+
+// foo_foo, bar_bar, qux_quxの3引数が要求される
+val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { /* キャメル -> スネークの命名変換関数 */ }
+```
+
+`fieldNameToPrefix = false`を指定した場合、`nameJoiner`オプションは無視されます。
+
+**nameJoiner**
+`nameJoiner`はパラメータ名とパラメータ名の結合方法の指定で、デフォルトでは`camelCase`が指定されており、`snake_case`と`kebab-case`のサポートも有ります。
+`NameJoiner`クラスを継承した`object`を作成することで自作することもできます。
