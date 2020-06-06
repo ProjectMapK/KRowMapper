@@ -192,7 +192,7 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { fieldName: String ->
 `KRowMapper`では命名変換処理を提供していませんが、`Spring`やそれを用いたプロジェクトの中で用いられるライブラリでは命名変換処理が提供されている場合が有ります。  
 `Jackson`、`Guava`の2つのライブラリで実際に「キャメルケース -> スネークケース」の変換処理を渡すサンプルコードを示します。
 
-**`Jackson`**
+##### Jackson
 ```kotlin
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 
@@ -200,7 +200,7 @@ val parameterNameConverter: (String) -> String = PropertyNamingStrategy.SnakeCas
 val mapper: KRowMapper<Dst> = KRowMapper(Dst::class, parameterNameConverter)
 ```
 
-**`Guava`**
+##### Guava
 ```kotlin
 import com.google.common.base.CaseFormat
 
@@ -377,7 +377,7 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { /* キャメル -> スネ
 ##### KParameterFlattenアノテーションのオプション
 `KParameterFlatten`アノテーションはネストしたクラスの引数名の扱いについて2つのオプションを持ちます。
 
-**fieldNameToPrefix**
+###### fieldNameToPrefix
 `KParameterFlatten`アノテーションはデフォルトでは引数名をプレフィックスに置いた名前で一致を見ようとします。  
 引数名をプレフィックスに付けたくない場合は`fieldNameToPrefix`オプションに`false`を指定します。
 
@@ -395,6 +395,6 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { /* キャメル -> スネ
 
 `fieldNameToPrefix = false`を指定した場合、`nameJoiner`オプションは無視されます。
 
-**nameJoiner**
+###### nameJoiner
 `nameJoiner`は引数名と引数名の結合方法の指定で、デフォルトでは`camelCase`が指定されており、`snake_case`と`kebab-case`のサポートも有ります。
 `NameJoiner`クラスを継承した`object`を作成することで自作することもできます。
