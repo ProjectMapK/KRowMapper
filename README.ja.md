@@ -117,3 +117,42 @@ val mapper: KRowMapper<Dst> = KRowMapper(dstConstructor)
 - コンストラクタのメソッドリファレンス: `::Dst`
 - `companion object`からのメソッドリファレンス: `(Dst)::factoryMethod`
 - `this`に定義されたメソッドのメソッドリファレンス: `this::factoryMethod`
+
+#### KClassからの初期化
+`KRowMapper`は`KClass`からも初期化できます。  
+デフォルトではプライマリーコンストラクタが呼び出し対象になります。
+
+```kotlin
+data class Dst(...)
+
+val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
+```
+
+##### KConstructorアノテーションによる呼び出し対象指定
+`KClass`から初期化を行う場合、`KConstructor`アノテーションを用いて呼び出し対象の関数を指定することができます。  
+
+以下の例ではセカンダリーコンストラクタが呼び出されます。
+
+```kotlin
+data class Dst(...) {
+    @KConstructor
+    constructor(...) : this(...)
+}
+
+val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
+```
+
+同様に、以下の例ではファクトリーメソッドが呼び出されます。
+
+```kotlin
+data class Dst(...) {
+    companion object {
+        @KConstructor
+        fun factory(...): Dst {
+            ...
+        }
+    }
+}
+
+val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
+```
