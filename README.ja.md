@@ -222,7 +222,7 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class, parameterNameConverter)
 3. 複数引数からのデシリアライズ
 
 #### KColumnDeserializerアノテーションを利用したデシリアライズ
-自作のクラスで、かつ単一引数から初期化できる場合、`KColumnDeserializer`アノテーションを用いてデシリアライズできます。  
+自作のクラスで、かつ単一引数から初期化できる場合、`KColumnDeserializer`アノテーションを用いたデシリアライズが利用できます。  
 `KColumnDeserializer`アノテーションは、コンストラクタ、もしくは`companion object`に定義したファクトリーメソッドに対して付与できます。
 
 ```kotlin
