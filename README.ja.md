@@ -88,7 +88,9 @@ val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst, /* 必要に応じた
 
 ## 詳細な使い方
 ### KRowMapperの初期化
-`KRowMapper`は`method reference(KFunction)`または`KClass`から初期化できます。
+`KRowMapper`は呼び出し対象の`method reference(KFunction)`、またはマッピング先の`KClass`から初期化できます。  
+よりプレーンな`Kotlin`に近い書き方をしたい場合には、呼び出し対象メソッドで全ての初期化処理を書くことをお勧めします。
+
 また、`KRowMapper`はデフォルトではフィールドの命名によってカラムとの対応を見るため、「フィールドがキャメルケースでカラムはスネークケース」というような場合、パラメータ名を変換する関数も渡す必要が有ります。
 
 #### method reference(KFunction)からの初期化
