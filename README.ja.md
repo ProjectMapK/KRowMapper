@@ -14,6 +14,8 @@ KRowMapper
 手動でマッピングコードを書いた場合と`KRowMapper`を用いた場合を比較します。  
 手動で書く場合フィールド件数が多ければ多いほど記述がかさみますが、`KRowMapper`を用いることで殆どコードを書かずにマッピングを行えます。
 
+ただし、フィールドの命名規則とDBのカラムの命名規則が異なる場合は命名変換関数を渡す必要が有る点にご注意ください（後述）。
+
 ```kotlin
 // マップ対象クラス
 data class Dst(
@@ -38,7 +40,7 @@ val dst: Dst = jdbcTemplate.query(query) { rs, _ ->
 }
 
 // KRowMapperを用いた場合
-val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst))
+val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst, /* 必要に応じた命名変換関数 */))
 ```
 
 ## インストール方法
