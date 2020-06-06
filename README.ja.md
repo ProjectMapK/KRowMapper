@@ -84,3 +84,8 @@ val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst, /* 必要に応じた
 つまり、`Kotlin`の`null`安全が壊れることによる実行時エラーは発生しません。
 
 また、`Kotlin`特有の機能であるデフォルト引数等にも対応しています。
+
+## 詳細な使い方
+### KRowMapperの初期化
+`KRowMapper`は`method reference(KFunction)`または`KClass`から初期化できます。
+また、`KRowMapper`はデフォルトではフィールドの命名によってカラムとの対応を見るため、「フィールドがキャメルケースでカラムはスネークケース」というような場合、パラメータ名を変換する関数も渡す必要が有ります。
