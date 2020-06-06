@@ -212,3 +212,11 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class, parameterNameConverter)
 ```
 
 また、ラムダを用いて任意の変換処理を行うこともできます。
+
+### 値のデシリアライズ
+`KRowMapper`は`java.sql.ResultSet`から値の取得を行うため、デフォルトではこの実装でサポートされていない型を取得することはできません。  
+この問題に対応するため、`KRowMapper`ではデフォルトの変換機能に加え以下の3種類のデシリアライズ方法を提供しています。
+
+1. `KColumnDeserializer`アノテーションを利用したデシリアライズ
+2. デシリアライズアノテーションを自作してのデシリアライズ
+3. 複数引数からのデシリアライズ
