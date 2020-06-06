@@ -156,3 +156,59 @@ data class Dst(...) {
 
 val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
 ```
+
+#### パラメータ名の変換
+`KRowMapper`は、デフォルトではフィールド名に対応するカラムをそのまま探すという挙動になります。
+
+```kotlin
+data class Dst(
+    fooFoo: String,
+    barBar: String,
+    bazBaz: Int?
+)
+
+// fooFoo, barBar, bazBazの3引数が要求される
+val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
+
+// 挙動としては以下と同等
+val rowMapper: RowMapper<Dst> = { rs, _ ->
+    Dst(
+            rs.getString("fooFoo"),
+            rs.getString("barBar"),
+            rs.getInt("bazBaz"),
+    )
+}
+```
+
+一方、フィールドの命名規則がキャメルケースかつDBのカラムの命名規則がスネークケースというような場合、このままでは一致を見ることができません。  
+このような状況では`KRowMapper`の初期化時に命名変換関数を渡す必要が有ります。
+
+```kotlin
+val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { fieldName: String ->
+    /* 命名変換処理 */
+}
+```
+
+##### 実際の変換処理
+`KRowMapper`では命名変換処理を提供していませんが、`Spring`やそれを用いたプロジェクトの中で用いられるライブラリでは命名変換処理が提供されている場合が殆どです。  
+例として、有名な2つのライブラリで実際に「キャメルケース -> スネークケース」の変換処理を渡すサンプルコードを示します。
+
+**`Jackson`**
+```kotlin
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
+
+val parameterNameConverter: (String) -> String = PropertyNamingStrategy.SnakeCaseStrategy()::translate
+val mapper: KRowMapper<Dst> = KRowMapper(Dst::class, parameterNameConverter)
+```
+
+**`Guava`**
+```kotlin
+import com.google.common.base.CaseFormat
+
+val parameterNameConverter: (String) -> String = { fieldName: String ->
+    CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, fieldName)
+}
+val mapper: KRowMapper<Dst> = KRowMapper(Dst::class, parameterNameConverter)
+```
+
+また、ラムダを用いて任意の変換処理を行うこともできます。
