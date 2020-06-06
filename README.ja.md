@@ -459,3 +459,6 @@ class Foo(
     val description: String = ""
 )
 ```
+
+#### Enumをデシリアライズする
+DBに格納された値と`Enum::name`プロパティが一致する場合、特別な記述無しに`Enum`をデシリアライズすることができます。
