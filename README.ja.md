@@ -86,14 +86,13 @@ val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst, /* 必要に応じた
 
 また、`Kotlin`特有の機能であるデフォルト引数等にも対応しています。
 
-## 詳細な使い方
-### KRowMapperの初期化
+## KRowMapperの初期化
 `KRowMapper`は呼び出し対象の`method reference(KFunction)`、またはマッピング先の`KClass`から初期化できます。  
 よりプレーンな`Kotlin`に近い書き方をしたい場合には、呼び出し対象メソッドで全ての初期化処理を書くことをお勧めします。
 
 また、`KRowMapper`はデフォルトではフィールドの命名によってカラムとの対応を見るため、「フィールドがキャメルケースでカラムはスネークケース」というような場合、パラメータ名を変換する関数も渡す必要が有ります。
 
-#### method reference(KFunction)からの初期化
+### method reference(KFunction)からの初期化
 `KRowMapper`は`method reference`から初期化できます。
 
 ```kotlin
@@ -118,7 +117,7 @@ val mapper: KRowMapper<Dst> = KRowMapper(dstConstructor)
 - `companion object`からのメソッドリファレンス: `(Dst)::factoryMethod`
 - `this`に定義されたメソッドのメソッドリファレンス: `this::factoryMethod`
 
-#### KClassからの初期化
+### KClassからの初期化
 `KRowMapper`は`KClass`からも初期化できます。  
 デフォルトではプライマリーコンストラクタが呼び出し対象になります。
 
@@ -128,7 +127,7 @@ data class Dst(...)
 val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
 ```
 
-##### KConstructorアノテーションによる呼び出し対象指定
+#### KConstructorアノテーションによる呼び出し対象指定
 `KClass`から初期化を行う場合、`KConstructor`アノテーションを用いて呼び出し対象の関数を指定することができます。  
 
 以下の例ではセカンダリーコンストラクタが呼び出されます。
@@ -157,7 +156,7 @@ data class Dst(...) {
 val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
 ```
 
-#### パラメータ名の変換
+### パラメータ名の変換
 `KRowMapper`は、デフォルトではフィールド名に対応するカラムをそのまま探すという挙動になります。
 
 ```kotlin
@@ -189,7 +188,7 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { fieldName: String ->
 }
 ```
 
-##### 実際の変換処理
+#### 実際の変換処理
 `KRowMapper`では命名変換処理を提供していませんが、`Spring`やそれを用いたプロジェクトの中で用いられるライブラリでは命名変換処理が提供されている場合が有ります。  
 `Jackson`、`Guava`の2つのライブラリで実際に「キャメルケース -> スネークケース」の変換処理を渡すサンプルコードを示します。
 
@@ -212,6 +211,9 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class, parameterNameConverter)
 ```
 
 また、当然ながらラムダ内で任意の変換処理を行うこともできます。
+
+## 詳細な使い方
+ここまでに記載した内容を用いることで`BeanPropertyRowMapper`以上の柔軟で安全なマッピングを行えますが、`KRowMapper`の提供する豊富な機能を使いこなすことで、更なる労力の削減が可能です。
 
 ### 値のデシリアライズ
 `KRowMapper`は`java.sql.ResultSet`から値の取得を行うため、デフォルトではこの実装でサポートされていない型を取得することはできません。  
