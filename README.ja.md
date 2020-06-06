@@ -431,3 +431,31 @@ data class Foo(
 ```
 
 `KParameterAlias`で設定したエイリアスにもパラメータ名の変換が適用されます。
+
+#### デフォルト引数を用いる
+`KRowMapper`では、特定の場面においてデフォルト引数を用いることができます。
+
+##### 必ずデフォルト引数を用いる
+DBから取得した値を用いず、必ずデフォルト引数を用いたい場合、`KUseDefaultArgument`アノテーションを利用できます。
+
+```kotlin
+class Foo(
+    ...,
+    @KUseDefaultArgument
+    val description: String = ""
+)
+```
+
+`KRowMapper`で`ResultSet`に存在しないフィールドを取得しようとした場合、通常では例外で落ちますが、`KUseDefaultArgument`アノテーションを付与している場合取得処理そのものが行われません。  
+これを応用することで、正常にマッピングを行うこともできます。
+
+##### 取得結果がnullの場合デフォルト引数を用いる
+取得結果が`null`であればデフォルト引数を用いたいという場合、`KParameterRequireNonNull`アノテーションを利用できます。
+
+```kotlin
+class Foo(
+    ...,
+    @KParameterRequireNonNull
+    val description: String = ""
+)
+```
