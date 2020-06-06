@@ -104,10 +104,10 @@ data class Dst(
 
 )
 
-// コンストラクターのメソッドリファレンスを取得
+// コンストラクタのメソッドリファレンスを取得
 val dstConstructor: KFunction<Dst> = ::Dst
 // KFunctionからKRowMapperを初期化
-val kRowMapper: KRowMapper<Dst> = KRowMapper(dstConstructor)
+val mapper: KRowMapper<Dst> = KRowMapper(dstConstructor)
 ```
 
 ユースケースとしては特に以下の3種類の`method reference`を利用することが大半だと思われます。
