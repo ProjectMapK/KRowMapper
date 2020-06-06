@@ -411,3 +411,23 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { /* キャメル -> スネ
 - 複数の値から1つの引数に変換したい
   - コンストラクタ/ファクトリーメソッドで変換処理を書く
   - `KParameterFlatten`アノテーションを用いる
+
+### その他の機能
+#### 引数名にエイリアスを付ける
+以下のように、`Kotlin`と`DB`とで名前の定義が食い違う場合が有ります。
+
+```kotlin
+// idフィールドはDB上ではfoo_idという名前で登録されている
+data class Foo(val id: Int)
+```
+
+このような場合、`KParameterAlias`アノテーションを用いることで、`DB`上のカラム名に合わせたマッピングが可能になります。
+
+```kotlin
+data class Foo(
+    @param:KParameterAlias("fooId")
+    val id: Int
+)
+```
+
+`KParameterAlias`で設定したエイリアスにもパラメータ名の変換が適用されます。
