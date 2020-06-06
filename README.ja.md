@@ -211,7 +211,7 @@ val parameterNameConverter: (String) -> String = { fieldName: String ->
 val mapper: KRowMapper<Dst> = KRowMapper(Dst::class, parameterNameConverter)
 ```
 
-また、ラムダを用いて任意の変換処理を行うこともできます。
+また、当然ながらラムダ内で任意の変換処理を行うこともできます。
 
 ### 値のデシリアライズ
 `KRowMapper`は`java.sql.ResultSet`から値の取得を行うため、デフォルトではこの実装でサポートされていない型を取得することはできません。  
