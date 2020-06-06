@@ -89,3 +89,28 @@ val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst, /* 必要に応じた
 ### KRowMapperの初期化
 `KRowMapper`は`method reference(KFunction)`または`KClass`から初期化できます。
 また、`KRowMapper`はデフォルトではフィールドの命名によってカラムとの対応を見るため、「フィールドがキャメルケースでカラムはスネークケース」というような場合、パラメータ名を変換する関数も渡す必要が有ります。
+
+#### method reference(KFunction)からの初期化
+`KRowMapper`は`method reference`から初期化できます。
+
+```kotlin
+data class Dst(
+    foo: String,
+    bar: String,
+    baz: Int?,
+
+    ...
+
+)
+
+// コンストラクターのメソッドリファレンスを取得
+val dstConstructor: KFunction<Dst> = ::Dst
+// KFunctionからKRowMapperを初期化
+val kRowMapper: KRowMapper<Dst> = KRowMapper(dstConstructor)
+```
+
+ユースケースとしては特に以下の3種類の`method reference`を利用することが大半だと思われます。
+
+- コンストラクタのメソッドリファレンス: `::Dst`
+- `companion object`からのメソッドリファレンス: `(Dst)::factoryMethod`
+- `this`に定義されたメソッドのメソッドリファレンス: `this::factoryMethod`
