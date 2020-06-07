@@ -131,6 +131,13 @@ data class Dst(...)
 val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
 ```
 
+
+You can also write the following using a `dummy constructor`.
+
+```kotlin
+val mapper: KRowMapper<Dst> = KRowMapper<Dst>()
+```
+
 #### Specifying the target of a call by KConstructor annotation
 When you initialize from the `KClass`, you can use the `KConstructor` annotation and to specify the function to be called. 
 
