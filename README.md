@@ -467,3 +467,6 @@ class Foo(
     val description: String = ""
 )
 ```
+
+#### Deserialize Enum
+If the value stored in the DB and the `Enum::name` property of the map destination are the same, it will be automatically converted to You can deserialize the `Enum`.
