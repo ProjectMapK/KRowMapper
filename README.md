@@ -2,6 +2,12 @@
 [![CircleCI](https://circleci.com/gh/ProjectMapK/KRowMapper.svg?style=svg)](https://circleci.com/gh/ProjectMapK/KRowMapper)
 [![](https://jitci.com/gh/ProjectMapK/KRowMapper/svg)](https://jitci.com/gh/ProjectMapK/KRowMapper)
 
+---
+
+[日本語版](https://github.com/ProjectMapK/KRowMapper/blob/master/README.ja.md)
+
+---
+
 KRowMapper
 ====
 `KRowMapper` is a `RowMapper` for `Kotlin`, which provides the following features.
