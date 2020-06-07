@@ -78,6 +78,18 @@ Please see [here](https://jitpack.io/#ProjectMapK/KRowMapper/) for the formal in
 	</dependency>
 ```
 
+## Principle of operation
+The behavior of `KRowMapper` is as follows.
+
+1. Get the `KFunction` to be called.
+2. Analyze the `KFunction` and determine what arguments are needed and how to deserialize them.
+3. Get the value for each argument from the `ResultSet` and deserialize it. and call the `KFunction`.
+
+`KRowMapper` performs the mapping by calling a `function`, so the result is a Subject to the constraints on the `argument` and `nullability`.  
+That is, there is no runtime error due to breaking the `null` safety of `Kotlin`(The `null` safety on type arguments may be broken due to problems on the `Kotlin` side). 
+
+Also, it supports the default arguments which are peculiar to `Kotlin`.
+
 ## Usage
 ### Initialization
 `KRowMapper` can be initialized from a `method reference` or an initialization function obtained from `KClass`.
