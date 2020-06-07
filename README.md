@@ -216,7 +216,10 @@ val parameterNameConverter: (String) -> String = { fieldName: String ->
 val mapper: KRowMapper<Dst> = KRowMapper(::Dst, parameterNameConverter)
 ```
 
-## Usage
+## Detailed usage
+By using the contents described so far, you can perform more flexible and safe mapping compared to `BeanPropertyRowMapper`.
+In addition, by making full use of the abundant functions provided by `KRowMapper`, further labor saving is possible.
+
 ### Deserialize column
 `KRowMapper` provides a deserialization function for the acquisition results of three patterns.
 
