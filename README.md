@@ -4,8 +4,11 @@
 
 KRowMapper
 ====
-This is a `RowMapper` like a `BeanPropertyRowMapper` for `Kotlin`.  
-You can call `KFunction`(e.g. `method reference`) from `ResultSet`.
+`KRowMapper` is a `RowMapper` for `Kotlin`, which provides the following features.
+
+- Object relationship mapping with minimal effort, equivalent to `BeanPropertyRowMapper`.
+- Flexible and safe mapping based on function calls with `reflection`.
+- Richer features and thus more flexible and labor-saving mapping.
 
 ```kotlin
 data class Dst(
