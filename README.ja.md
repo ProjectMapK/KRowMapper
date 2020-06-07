@@ -188,6 +188,8 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { fieldName: String ->
 }
 ```
 
+また、当然ながらラムダ内で任意の変換処理を行うこともできます。
+
 #### 実際の変換処理
 `KRowMapper`では命名変換処理を提供していませんが、`Spring`やそれを用いたプロジェクトの中で用いられるライブラリでは命名変換処理が提供されている場合が有ります。  
 `Jackson`、`Guava`の2つのライブラリで実際に「キャメルケース -> スネークケース」の変換処理を渡すサンプルコードを示します。
@@ -209,8 +211,6 @@ val parameterNameConverter: (String) -> String = { fieldName: String ->
 }
 val mapper: KRowMapper<Dst> = KRowMapper(Dst::class, parameterNameConverter)
 ```
-
-また、当然ながらラムダ内で任意の変換処理を行うこともできます。
 
 ## 詳細な使い方
 ここまでに記載した内容を用いることで`BeanPropertyRowMapper`以上の柔軟で安全なマッピングを行えますが、`KRowMapper`の提供する豊富な機能を使いこなすことで、更なる労力の削減が可能です。
