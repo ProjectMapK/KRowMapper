@@ -51,6 +51,33 @@ val dst: Dst = jdbcTemplate.query(query) { rs, _ ->
 val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst, /* Naming transformation functions as needed. */))
 ```
 
+## Installation
+`KRowMapper` is published on JitPack.  
+You can use this library on `maven`, `gradle` and any other build tools.  
+Please see [here](https://jitpack.io/#ProjectMapK/KRowMapper/) for the formal introduction method. 
+
+### Example on maven
+**1. add repository reference for JitPack**
+
+```xml
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+```
+
+**2. add dependency**
+
+```xml
+	<dependency>
+	    <groupId>com.github.ProjectMapK</groupId>
+	    <artifactId>KRowMapper</artifactId>
+	    <version>Tag</version>
+	</dependency>
+```
+
 ## Usage
 ### Initialization
 `KRowMapper` can be initialized from a `method reference` or an initialization function obtained from `KClass`.
@@ -301,31 +328,4 @@ The name conversion function is applied to the name specified here.
 
 ```kotlin
 data class Dst(@param:KParameterAlias("fooId") val barValue: Int)
-```
-
-## Installation
-Published on JitPack.  
-You can use this library on `maven`, `gradle` and any other build tools.  
-Please see [here](https://jitpack.io/#ProjectMapK/KRowMapper/) for the formal introduction method. 
-
-### Example on maven
-**1. add repository reference for JitPack**
-
-```xml
-	<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
-```
-
-**2. add dependency**
-
-```xml
-	<dependency>
-	    <groupId>com.github.ProjectMapK</groupId>
-	    <artifactId>KRowMapper</artifactId>
-	    <version>Tag</version>
-	</dependency>
 ```
