@@ -90,46 +90,13 @@ That is, there is no runtime error due to breaking the `null` safety of `Kotlin`
 
 Also, it supports the default arguments which are peculiar to `Kotlin`.
 
+## Initialization
+`KRowMapper` can be initialized from `method reference(KFunction)` to be called or the `KClass` to be mapped.
+
+Also, by default, `KRowMapper` compares argument names and column names to see if they correspond.  
+Therefore, in the case of "argument name is `camelCase` and column name is `snake_case`", it is necessary to pass a function that appropriately converts the naming convention of the argument name.
+
 ## Usage
-### Initialization
-`KRowMapper` can be initialized from a `method reference` or an initialization function obtained from `KClass`.
-
-#### Initialization from KClass
-When initializing from `KClass`, the `primary constructor` is used by default.
-
-```kotlin
-val rowMapper = KRowMapper(Dst::class)
-```
-
-By assigning the `KConstructor` `annotation` to the `secondary constructor` or `factory method`, you can also specify the `KFunction` to be used when initializing from the `KClass`.
-
-```kotlin
-class SecondaryConstructorDst(val argument: Int) {
-    @KConstructor
-    constructor(argument: Number) : this(argument.toInt())
-}
-
-class CompanionFactoryDst(val argument: IntArray) {
-    companion object {
-        @KConstructor
-        fun factory(csv: String): CompanionFactoryDst {
-            return csv.split(",").map { it.toInt() }.toIntArray().let { CompanionFactoryDst(it) }
-        }
-    }
-}
-```
-
-### Convert Naming conventions
-`KRowMapper` searches columns by default in camel case.  
-If the DB is named in snake case, mapping can be done by passing a conversion function(e.g. defined in `JackSon`, `Guava`) to `KRowMapper`.
-
-```kotlin
-// if use Guava.
-KRowMapper(::Dst) { colName: String ->
-    CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, colName)
-}
-```
-
 ### Deserialize column
 `KRowMapper` provides a deserialization function for the acquisition results of three patterns.
 
