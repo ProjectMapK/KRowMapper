@@ -33,7 +33,7 @@ class KParameterFlattenTest {
             every { getObject("qux_qux", any<Class<*>>()) } returns LocalDateTime.MIN
         }
 
-        val result = KRowMapper(::Dst, this::camelToSnake).mapRow(resultSet, 0)
+        val result = KRowMapper<Dst>(this::camelToSnake).mapRow(resultSet, 0)
         assertEquals(expected, result)
 
         verify(exactly = 1) { resultSet.getObject("baz_baz_foo_foo", Integer::class.java) }
