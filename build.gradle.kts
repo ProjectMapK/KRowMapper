@@ -3,6 +3,7 @@ plugins {
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.3.72"
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
+    id("jacoco")
 }
 
 group = "com.mapk"
@@ -72,5 +73,13 @@ tasks {
     }
     test {
         useJUnitPlatform()
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.isEnabled = true
+            csv.isEnabled = false
+            html.isEnabled = true
+        }
     }
 }
