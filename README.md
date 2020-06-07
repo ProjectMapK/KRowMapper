@@ -16,26 +16,39 @@ KRowMapper
 - Flexible and safe mapping based on function calls with `reflection`.
 - Richer features and thus more flexible and labor-saving mapping.
 
+## Demo code
+Here is a comparison between writing the mapping code manually and using `KRowMapper`.  
+The more arguments you write manually, the more you need to write, but if you use `KRowMapper` This allows you to do the mapping without writing any code.  
+Also, you don't need external configuration file at all.
+
+However, if the naming conventions of arguments and DB columns are different, you will need to pass a naming conversion function.  
+Please note that there are (see below).
+
 ```kotlin
+// mapping destination
 data class Dst(
     foo: String,
     bar: String,
     baz: Int?,
+
     ...
+
 )
 
-// before
+// If you write RowMapper manually.
 val dst: Dst = jdbcTemplate.query(query) { rs, _ ->
     Dst(
             rs.getString("foo"),
             rs.getString("bar"),
             rs.getInt("baz"),
+
             ...
+
     )
 }
 
-// after
-val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst))
+// If you use KRowMapper
+val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst, /* Naming transformation functions as needed. */))
 ```
 
 ## Usage
