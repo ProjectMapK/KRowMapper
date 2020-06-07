@@ -423,6 +423,26 @@ Here's a quick look at how to deserialize the content so far.
   - Use the `constructor` or `factory methods` to perform the conversion.
   - Use `KParameterFlatten` annotation.
 
+### Other Features
+#### Adding an alias to argument names
+There is a case where the name of the argument and the column name are different as follows.
+
+```kotlin
+// The argument "id" is defined in the DB as "foo_id".
+data class Foo(val id: Int)
+```
+
+In such a case, the `KParameterAlias` annotation is used to make the mapping according to the column name on the DB.
+
+```kotlin
+data class Foo(
+    @param:KParameterAlias("fooId")
+    val id: Int
+)
+```
+
+The transformation of the argument name is also applied to the alias set by `KParameterAlias`.
+
 ### Use default arguments
 `KRowMapper` supports `default arguments`.  
 `Default arguments` are available in the following situations:
@@ -446,12 +466,4 @@ When `KParameterRequireNonNull` `annotation` is given to a parameter,
 
 ```kotlin
 data class Dst(val fooId: Int, @param:KParameterRequireNonNull val barValue: String = "default")
-```
-
-### Parameter aliasing
-In `KRowMapper`, the column name of the acquisition target can be specified by giving the `KParameterAlias` `annotation` to the `parameter`.  
-The name conversion function is applied to the name specified here.
-
-```kotlin
-data class Dst(@param:KParameterAlias("fooId") val barValue: Int)
 ```
