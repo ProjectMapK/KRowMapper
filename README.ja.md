@@ -400,6 +400,10 @@ val mapper: KRowMapper<Dst> = KRowMapper(::Dst) { /* キャメル -> スネー�
 `nameJoiner`は引数名と引数名の結合方法の指定で、デフォルトでは`camelCase`が指定されており、`snake_case`と`kebab-case`のサポートも有ります。
 `NameJoiner`クラスを継承した`object`を作成することで自作することもできます。
 
+##### 他のデシリアライズ方法との併用
+`KParameterFlatten`アノテーションを付与した場合も、これまでに紹介したデシリアライズ方法は全て機能します。  
+また、`InnerDst`の中で更に`KParameterFlatten`アノテーションを利用することもできます。
+
 #### デシリアライズ方法早見
 ここまでの内容をまとめた、操作に対する`KRowMapper`を用いる書き方の早見です。
 
