@@ -166,7 +166,7 @@ data class Dst(
 )
 
 // fooFoo, barBar, bazBazの3引数が要求される
-val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
+val mapper: KRowMapper<Dst> = KRowMapper(::Dst)
 
 // 挙動としては以下と同等
 val rowMapper: RowMapper<Dst> = { rs, _ ->
@@ -182,7 +182,7 @@ val rowMapper: RowMapper<Dst> = { rs, _ ->
 このような状況では`KRowMapper`の初期化時に命名変換関数を渡す必要が有ります。
 
 ```kotlin
-val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { fieldName: String ->
+val mapper: KRowMapper<Dst> = KRowMapper(::Dst) { fieldName: String ->
     /* 命名変換処理 */
 }
 ```
@@ -198,7 +198,7 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { fieldName: String ->
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 
 val parameterNameConverter: (String) -> String = PropertyNamingStrategy.SnakeCaseStrategy()::translate
-val mapper: KRowMapper<Dst> = KRowMapper(Dst::class, parameterNameConverter)
+val mapper: KRowMapper<Dst> = KRowMapper(::Dst, parameterNameConverter)
 ```
 
 ##### Guava
@@ -208,7 +208,7 @@ import com.google.common.base.CaseFormat
 val parameterNameConverter: (String) -> String = { fieldName: String ->
     CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, fieldName)
 }
-val mapper: KRowMapper<Dst> = KRowMapper(Dst::class, parameterNameConverter)
+val mapper: KRowMapper<Dst> = KRowMapper(::Dst, parameterNameConverter)
 ```
 
 ## 詳細な使い方
@@ -372,7 +372,7 @@ data class Dst(
 )
 
 // baz_baz_foo_foo, baz_baz_bar_bar, qux_quxの3引数が要求される
-val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { /* キャメル -> スネークの命名変換関数 */ }
+val mapper: KRowMapper<Dst> = KRowMapper(::Dst) { /* キャメル -> スネークの命名変換関数 */ }
 ```
 
 ##### KParameterFlattenアノテーションのオプション
@@ -391,7 +391,7 @@ data class Dst(
 )
 
 // foo_foo, bar_bar, qux_quxの3引数が要求される
-val mapper: KRowMapper<Dst> = KRowMapper(Dst::class) { /* キャメル -> スネークの命名変換関数 */ }
+val mapper: KRowMapper<Dst> = KRowMapper(::Dst) { /* キャメル -> スネークの命名変換関数 */ }
 ```
 
 `fieldNameToPrefix = false`を指定した場合、`nameJoiner`オプションは無視されます。
