@@ -22,7 +22,7 @@ class DefaultValueTest {
         every { resultSet.getObject("foo_id", any<Class<*>>()) } returns 1
         every { resultSet.getObject("bar_value", any<Class<*>>()) } returns "From result set."
 
-        val result = KRowMapper(::Dst, this::camelToSnake).mapRow(resultSet, 0)
+        val result = KRowMapper(Dst::class, this::camelToSnake).mapRow(resultSet, 0)
 
         Assertions.assertEquals(1, result.fooId)
         Assertions.assertEquals("default", result.barValue)
