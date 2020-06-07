@@ -397,7 +397,7 @@ val mapper: KRowMapper<Dst> = KRowMapper(::Dst) { /* キャメル -> スネー�
 `fieldNameToPrefix = false`を指定した場合、`nameJoiner`オプションは無視されます。
 
 ###### nameJoiner
-`nameJoiner`は引数名と引数名の結合方法の指定で、デフォルトでは`camelCase`が指定されており、`snake_case`と`kebab-case`のサポートも有ります。
+`nameJoiner`は引数名と引数名の結合方法の指定で、デフォルトでは`camelCase`が指定されており、`snake_case`と`kebab-case`のサポートも有ります。  
 `NameJoiner`クラスを継承した`object`を作成することで自作することもできます。
 
 ##### 他のデシリアライズ方法との併用
