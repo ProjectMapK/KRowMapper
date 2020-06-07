@@ -160,6 +160,62 @@ data class Dst(...) {
 val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
 ```
 
+### Conversion of argument names
+By default, `KRowMapper` looks for the column corresponding to the argument name.
+
+```kotlin
+data class Dst(
+    fooFoo: String,
+    barBar: String,
+    bazBaz: Int?
+)
+
+// required arguments: fooFoo, barBar, bazBaz
+val mapper: KRowMapper<Dst> = KRowMapper(::Dst)
+
+// the behavior is equivalent to the following
+val rowMapper: RowMapper<Dst> = { rs, _ ->
+    Dst(
+            rs.getString("fooFoo"),
+            rs.getString("barBar"),
+            rs.getInt("bazBaz"),
+    )
+}
+```
+
+On the other hand, if the argument naming convention is a `camelCase` and the DB column naming convention is a `snake_case` You will not be able to see the match in this case.  
+In this situation, you need to pass the naming transformation function at the initialization of `KRowMapper`. 
+
+```kotlin
+val mapper: KRowMapper<Dst> = KRowMapper(::Dst) { fieldName: String ->
+    /* some naming transformation process */
+}
+```
+
+#### The actual conversion process
+Since `KRowMapper` does not provide the naming transformation process, the naming transformation process requires an external library.  
+
+As an example, sample code that passes the conversion process from `camelCase` to `snake_case` is shown for two libraries, `Jackson` and `Guava`.
+These libraries are often used by `Spring framework` and other libraries.
+
+##### Jackson
+```kotlin
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
+
+val parameterNameConverter: (String) -> String = PropertyNamingStrategy.SnakeCaseStrategy()::translate
+val mapper: KRowMapper<Dst> = KRowMapper(::Dst, parameterNameConverter)
+```
+
+##### Guava
+```kotlin
+import com.google.common.base.CaseFormat
+
+val parameterNameConverter: (String) -> String = { fieldName: String ->
+    CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, fieldName)
+}
+val mapper: KRowMapper<Dst> = KRowMapper(::Dst, parameterNameConverter)
+```
+
 ## Usage
 ### Deserialize column
 `KRowMapper` provides a deserialization function for the acquisition results of three patterns.
