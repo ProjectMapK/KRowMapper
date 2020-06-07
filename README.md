@@ -268,6 +268,93 @@ data class Dst(
 )
 ```
 
+#### Deserialization by creating your own custom deserialization annotations
+If you cannot use `KColumnDeserializer`, you can deserialize it by creating a custom deserialization annotations and adding it to the parameter.  
+
+
+Custom deserialization annotation is made by defining a pair of `deserialization annotation` and `deserializer`.
+As an example, we will show how to create a `LocalDateTimeDeserializer` that deserializes from `String` to `LocalDateTime`.
+
+##### Create deserialization annotation
+`@Target(AnnotationTarget.VALUE_PARAMETER)` and `KColumnDeserializeBy` annotation and several other annotations You can define a deserialization annotation by assigning a `KColumnDeserializeBy` annotation.
+
+The argument of the `KColumnDeserializeBy` annotation requires the `KClass` of the deserializer.  
+In this example, it is `LocalDateTimeDeserializerImpl`.
+
+Also, arguments defined in the annotation can be referenced from the deserializer.
+
+```kotlin
+@Retention(AnnotationRetention.RUNTIME)
+@MustBeDocumented
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@KColumnDeserializeBy(LocalDateTimeDeserializerImpl::class)
+annotation class LocalDateTimeDeserializer(val pattern: String = "yyyy-MM-dd'T'HH:mm:ss")
+```
+
+##### Create deserializer
+You can define `deserializer` by inheriting `AbstractKColumnDeserializer <A, S, D>`.  
+Generics `A`,`S`,`D` have the following meanings.
+
+- `A`: `deserialization annotation` `Type`.
+- `S`: Source `Type`.
+- `D`: Destination `Type`.
+
+```kotlin
+class LocalDateTimeDeserializerImpl(
+    annotation: LocalDateTimeDeserializer
+) : AbstractKColumnDeserializer<LocalDateTimeDeserializer, String, LocalDateTime>(annotation) {
+    private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(annotation.pattern)
+
+    override val srcClass: Class<String> = String::class.javaObjectType
+
+    override fun deserialize(source: String?): LocalDateTime? {
+        return source?.let {
+            LocalDateTime.parse(it, formatter)
+        }
+    }
+}
+```
+
+The `primary constructor` of the `deserializer` must request only the `deserialization annotation` specified in the `generics` as an argument.  
+This is called when `KRowMapper` is initialized.
+
+As shown in the example, you can refer to the annotation argument as you wish.
+
+##### Using custom deserialization annotations
+The following is a summary of the `deserialization annotation` and `deserializer` created so far.
+
+```kotlin
+@Retention(AnnotationRetention.RUNTIME)
+@MustBeDocumented
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@KColumnDeserializeBy(LocalDateTimeDeserializerImpl::class)
+annotation class LocalDateTimeDeserializer(val pattern: String = "yyyy-MM-dd'T'HH:mm:ss")
+
+class LocalDateTimeDeserializerImpl(
+    annotation: LocalDateTimeDeserializer
+) : AbstractKColumnDeserializer<LocalDateTimeDeserializer, String, LocalDateTime>(annotation) {
+    private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern(annotation.pattern)
+
+    override val srcClass: Class<String> = String::class.javaObjectType
+
+    override fun deserialize(source: String?): LocalDateTime? {
+        return source?.let {
+            LocalDateTime.parse(it, formatter)
+        }
+    }
+}
+```
+
+If you give it, you get the following.  
+Since we can pass arbitrary arguments to `pattern`, we can see that it is highly flexible.
+
+```kotlin
+data class Dst(
+        @LocalDateTimeDeserializer(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+        val createTime: LocalDateTime
+)
+```
+
 ### Use default arguments
 `KRowMapper` supports `default arguments`.  
 `Default arguments` are available in the following situations:
