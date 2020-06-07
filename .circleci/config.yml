@@ -44,3 +44,5 @@ jobs:
       - run: gradle ktlintCheck
       # run tests!
       - run: gradle test
+      # upload coverages to codecov
+      - run: bash <(curl -s https://codecov.io/bash)
