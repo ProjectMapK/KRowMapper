@@ -409,6 +409,20 @@ You can also write your own by creating `object` which extends the `NameJoiner` 
 The `KParameterFlatten` annotation also works with all the deserialization methods we have introduced so far.  
 Also, you can use further `KParameterFlatten` annotations in `InnerDst`.
 
+#### A quick look at how to deserialize
+Here's a quick look at how to deserialize the content so far.
+
+- I want to convert from a single value to multiple arguments.
+  - Use the `constructor` or `factory methods` to perform the conversion.
+- I want to convert a single value to a single argument.
+  - Use the `constructor` or `factory methods` to perform the conversion.
+  - Use `KColumnDeserializer` annotation.
+  - Use custom deserialization annotations.
+  - (Use `KParameterFlatten` annotation.)
+- I want to convert single argument from multiple values.
+  - Use the `constructor` or `factory methods` to perform the conversion.
+  - Use `KParameterFlatten` annotation.
+
 ### Use default arguments
 `KRowMapper` supports `default arguments`.  
 `Default arguments` are available in the following situations:
