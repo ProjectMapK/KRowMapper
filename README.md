@@ -96,6 +96,31 @@ Also, it supports the default arguments which are peculiar to `Kotlin`.
 Also, by default, `KRowMapper` compares argument names and column names to see if they correspond.  
 Therefore, in the case of "argument name is `camelCase` and column name is `snake_case`", it is necessary to pass a function that appropriately converts the naming convention of the argument name.
 
+### Initialization from method reference(KFunction)
+You can initialize `KRowMapper` from `method reference(KFunction)` as follows It is.
+
+```kotlin
+data class Dst(
+    foo: String,
+    bar: String,
+    baz: Int?,
+
+    ...
+
+)
+
+// get constructor method reference
+val dstConstructor: KFunction<Dst> = ::Dst
+// initialize KRowMapper from KFunction
+val mapper: KRowMapper<Dst> = KRowMapper(dstConstructor)
+```
+
+The following three methods are the main ways to get the `method reference`.
+
+- from `constructor`: `::Dst`
+- from `factory method` in `companion object`: `(Dst)::factoryMethod`
+- from instance method in `this` scope: `this::factoryMethod`
+
 ## Usage
 ### Deserialize column
 `KRowMapper` provides a deserialization function for the acquisition results of three patterns.
