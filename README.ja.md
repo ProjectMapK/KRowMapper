@@ -126,6 +126,12 @@ data class Dst(...)
 val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
 ```
 
+ダミーコンストラクタを用いることで以下のようにも書けます。
+
+```kotlin
+val mapper: KRowMapper<Dst> = KRowMapper<Dst>()
+```
+
 #### KConstructorアノテーションによる呼び出し対象指定
 `KClass`から初期化を行う場合、`KConstructor`アノテーションを用いて呼び出し対象の関数を指定することができます。  
 
