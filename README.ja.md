@@ -87,8 +87,7 @@ val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst, /* 必要に応じた
 また、`Kotlin`特有の機能であるデフォルト引数等にも対応しています。
 
 ## KRowMapperの初期化
-`KRowMapper`は呼び出し対象の`method reference(KFunction)`、またはマッピング先の`KClass`から初期化できます。  
-よりプレーンな`Kotlin`に近い書き方をしたい場合には、呼び出し対象メソッドで全ての初期化処理を書くことをお勧めします。
+`KRowMapper`は呼び出し対象の`method reference(KFunction)`、またはマッピング先の`KClass`から初期化できます。
 
 また、`KRowMapper`はデフォルトでは引数名によってカラムとの対応を見るため、「引数がキャメルケースでカラムはスネークケース」というような場合、引数名を変換する関数も渡す必要が有ります。
 
@@ -214,6 +213,8 @@ val mapper: KRowMapper<Dst> = KRowMapper(Dst::class, parameterNameConverter)
 
 ## 詳細な使い方
 ここまでに記載した内容を用いることで`BeanPropertyRowMapper`以上の柔軟で安全なマッピングを行えますが、`KRowMapper`の提供する豊富な機能を使いこなすことで、更なる労力の削減が可能です。
+
+ただし、よりプレーンな`Kotlin`に近い書き方をしたい場合にはこれらの機能を用いず、呼び出し対象メソッドで全ての初期化処理を書くことをお勧めします。
 
 ### 値のデシリアライズ
 `KRowMapper`は`java.sql.ResultSet`から値の取得を行うため、デフォルトではこの実装でサポートされていない型を取得することはできません。  
