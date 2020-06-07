@@ -355,6 +355,60 @@ data class Dst(
 )
 ```
 
+#### Deserialization from multiple arguments
+If `InnerDst` requires multiple arguments, you can not map `Dst` with `KRwoMapper` as it is.  
+You can deserialize such a class which requires multiple arguments by using the `KParameterFlatten` annotation.
+
+```kotlin
+data class InnerDst(val fooFoo: Int, val barBar: String)
+data class Dst(val bazBaz: InnerDst, val quxQux: LocalDateTime)
+```
+
+If the column name of `DB` is `snake_case` and you want to specify the argument name as a prefix, the following annotation is added.  
+The class specified with `KParameterFlatten` is initialized from the function specified with the aforementioned `KConstructor` annotation or the `primary constructor`.
+
+```kotlin
+data class InnerDst(val fooFoo: Int, val barBar: String)
+data class Dst(
+    @KParameterFlatten(nameJoiner = NameJoiner.Snake::class)
+    val bazBaz: InnerDst,
+    val quxQux: LocalDateTime
+)
+
+// required 3 arguments that baz_baz_foo_foo, baz_baz_bar_bar, qux_qux
+val mapper: KRowMapper<Dst> = KRowMapper(::Dst) { /* some naming transformation process */ }
+```
+
+##### Annotation options of KParameterFlatten
+The `KParameterFlatten` annotation has two options for handling argument names.
+
+###### fieldNameToPrefix
+By default, the `KParameterFlatten` annotation tries to find a match by prefixing the name of the argument with the name of the prefix.  
+If you don't want to prefix the argument names, you can set the `fieldNameToPrefix` option to `false`.
+
+```kotlin
+data class InnerDst(val fooFoo: Int, val barBar: String)
+data class Dst(
+    @KParameterFlatten(fieldNameToPrefix = false)
+    val bazBaz: InnerDst,
+    val quxQux: LocalDateTime
+)
+
+// required 3 arguments that foo_foo, bar_bar, qux_qux
+val mapper: KRowMapper<Dst> = KRowMapper(::Dst) { /* some naming transformation process */ }
+```
+
+If `fieldNameToPrefix = false` is specified, the `nameJoiner` option is ignored.
+
+##### nameJoiner
+The `nameJoiner` specifies how to join argument names to argument names.  
+By default, `camelCase` is specified, and `snake_case` and `kebab-case` are also supported.  
+You can also write your own by creating `object` which extends the `NameJoiner` class.
+
+##### Use with other deserialization methods
+The `KParameterFlatten` annotation also works with all the deserialization methods we have introduced so far.  
+Also, you can use further `KParameterFlatten` annotations in `InnerDst`.
+
 ### Use default arguments
 `KRowMapper` supports `default arguments`.  
 `Default arguments` are available in the following situations:
