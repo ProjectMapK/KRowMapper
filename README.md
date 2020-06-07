@@ -228,6 +228,46 @@ To deal with this problem, `KRowMapper` provides the following three types of de
 2. Deserialization by creating your own custom deserialization annotations.
 3. Deserialization from multiple arguments.
 
+#### Deserialization by using the KColumnDeserializer annotation
+If it is a self-made class and can be initialized from a single argument, deserialization using the `KColumnDeserializer` annotation can be used.
+`KColumnDeserializer` annotation can be used to `constructor` or `factory method` defined in `companion object`.
+
+```kotlin
+// for primary constructor
+data class FooId @KColumnDeserializer constructor(val id: Int)
+```
+
+```kotlin
+// for secondary constructor
+data class FooId(val id: Int) {
+    @KColumnDeserializer
+    constructor(id: String) : this(id.toInt())
+}
+```
+
+```kotlin
+// for factory method
+data class FooId(val id: Int) {
+    companion object {
+        @KColumnDeserializer
+        fun of(id: String): FooId = FooId(id.toInt())
+    }
+}
+```
+
+Class with `KColumnDeserializer` annotation can be mapped as an argument without any special description.
+
+```kotlin
+data class Dst(
+    fooId: FooId,
+    bar: String,
+    baz: Int?,
+
+    ...
+
+)
+```
+
 ### Use default arguments
 `KRowMapper` supports `default arguments`.  
 `Default arguments` are available in the following situations:
