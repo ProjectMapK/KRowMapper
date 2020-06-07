@@ -121,6 +121,45 @@ The following three methods are the main ways to get the `method reference`.
 - from `factory method` in `companion object`: `(Dst)::factoryMethod`
 - from instance method in `this` scope: `this::factoryMethod`
 
+### Initialization from KClass
+The `KRowMapper` can be initialized by `KClass`.  
+By default, the primary constructor is the target of the call.
+
+```kotlin
+data class Dst(...)
+
+val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
+```
+
+#### Specifying the target of a call by KConstructor annotation
+When you initialize from the `KClass`, you can use the `KConstructor` annotation and to specify the function to be called. 
+
+In the following example, the `secondary constructor` is called.
+
+```kotlin
+data class Dst(...) {
+    @KConstructor
+    constructor(...) : this(...)
+}
+
+val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
+```
+
+Similarly, the following example calls the `factory method`.
+
+```kotlin
+data class Dst(...) {
+    companion object {
+        @KConstructor
+        fun factory(...): Dst {
+            ...
+        }
+    }
+}
+
+val mapper: KRowMapper<Dst> = KRowMapper(Dst::class)
+```
+
 ## Usage
 ### Deserialize column
 `KRowMapper` provides a deserialization function for the acquisition results of three patterns.
