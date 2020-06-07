@@ -251,7 +251,7 @@ data class FooId(val id: Int) {
 }
 ```
 
-`KColumnDeserializer`アノテーションが設定されているクラスは、特別な記述をしなくてもパラメータとしてマッピングが可能です。
+`KColumnDeserializer`アノテーションが設定されているクラスは、特別な記述をしなくても引数としてマッピングが可能です。
 
 ```kotlin
 // fooIdにKColumnDeserializerが付与されていればDstでは何もせずに正常にマッピングができる
@@ -431,7 +431,7 @@ data class Foo(
 )
 ```
 
-`KParameterAlias`で設定したエイリアスにもパラメータ名の変換が適用されます。
+`KParameterAlias`で設定したエイリアスにも引数名の変換が適用されます。
 
 #### デフォルト引数を用いる
 `KRowMapper`では、特定の場面においてデフォルト引数を用いることができます。
