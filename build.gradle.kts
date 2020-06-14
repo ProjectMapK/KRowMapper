@@ -2,12 +2,14 @@ plugins {
     id("maven")
     id("java")
     id("org.jetbrains.kotlin.jvm") version "1.3.72"
+    // その他補助系
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
     id("jacoco")
+    id("com.github.ben-manes.versions") version "0.28.0"
 }
 
 group = "com.mapk"
-version = "0.14"
+version = "0.15"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -33,7 +35,7 @@ dependencies {
     implementation(kotlin("reflect"))
     api("com.github.ProjectMapK:Shared:0.16")
     // 使うのはRowMapperのみなため他はexclude、またバージョンそのものは使う相手に合わせるためcompileOnly
-    compileOnly(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE") {
+    compileOnly(group = "org.springframework", name = "spring-jdbc", version = "5.2.7.RELEASE") {
         exclude(module = "spring-beans")
         exclude(module = "spring-jcl")
         exclude(module = "spring-tx")
@@ -47,13 +49,13 @@ dependencies {
     testImplementation("io.mockk:mockk:1.10.0")
 
     // テスト時には無いと困るため、別口でimplementation
-    testImplementation(group = "org.springframework", name = "spring-jdbc", version = "5.2.4.RELEASE")
+    testImplementation(group = "org.springframework", name = "spring-jdbc", version = "5.2.7.RELEASE")
     // https://mvnrepository.com/artifact/com.h2database/h2
     testImplementation(group = "com.h2database", name = "h2", version = "1.4.200")
 
     // 現状プロパティ名の変換はテストでしか使っていないのでtestImplementation
     // https://mvnrepository.com/artifact/com.google.guava/guava
-    testImplementation(group = "com.google.guava", name = "guava", version = "28.2-jre")
+    testImplementation(group = "com.google.guava", name = "guava", version = "29.0-jre")
 }
 
 tasks {
