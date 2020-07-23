@@ -58,10 +58,10 @@ val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst, /* 必要に応じた
 
 ```xml
 <repositories>
-	<repository>
-	    <id>jitpack.io</id>
-	    <url>https://jitpack.io</url>
-	</repository>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
 </repositories>
 ```
 
