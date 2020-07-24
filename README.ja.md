@@ -310,11 +310,7 @@ class LocalDateTimeDeserializerImpl(
 
     override val srcClass: Class<String> = String::class.javaObjectType
 
-    override fun deserialize(source: String?): LocalDateTime? {
-        return source?.let {
-            LocalDateTime.parse(it, formatter)
-        }
-    }
+    override fun deserialize(source: String): LocalDateTime = LocalDateTime.parse(source, formatter)
 }
 ```
 
@@ -340,11 +336,7 @@ class LocalDateTimeDeserializerImpl(
 
     override val srcClass: Class<String> = String::class.javaObjectType
 
-    override fun deserialize(source: String?): LocalDateTime? {
-        return source?.let {
-            LocalDateTime.parse(it, formatter)
-        }
-    }
+    override fun deserialize(source: String): LocalDateTime = LocalDateTime.parse(source, formatter)
 }
 ```
 

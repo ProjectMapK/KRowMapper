@@ -41,7 +41,7 @@ internal sealed class ParameterForMap<S, D> {
             deserializer: AbstractKColumnDeserializer<*, S, D>
         ) : this(name, deserializer.srcClass, deserializer::deserialize)
 
-        override fun getObject(rs: ResultSet): D? = deserializer.call(rs.getObject(name, srcClazz))
+        override fun getObject(rs: ResultSet): D? = rs.getObject(name, srcClazz)?.let { deserializer.call(it) }
     }
 
     companion object {
