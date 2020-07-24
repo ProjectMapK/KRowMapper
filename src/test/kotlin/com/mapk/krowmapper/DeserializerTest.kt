@@ -26,11 +26,7 @@ class DeserializerTest {
 
         override val srcClass: Class<String> = String::class.javaObjectType
 
-        override fun deserialize(source: String?): LocalDateTime? {
-            return source?.let {
-                LocalDateTime.parse(it, formatter)
-            }
-        }
+        override fun deserialize(source: String): LocalDateTime = LocalDateTime.parse(source, formatter)
     }
 
     data class Dst(@LocalDateTimeDeserializer val dateTime: LocalDateTime)
