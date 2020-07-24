@@ -32,13 +32,16 @@ class DeserializerTest {
 
     data class Dst(@LocalDateTimeDeserializer val dateTime: LocalDateTime?)
 
+    val mapper = KRowMapper(::Dst)
+
     @Test
     @DisplayName("正常に変換した場合")
     fun isCollect() {
-        val resultSet = mockk<ResultSet>()
-        every { resultSet.getObject("dateTime", any<Class<*>>()) } returns "2020-02-01T01:23:45"
+        val resultSet = mockk<ResultSet> {
+            every { getObject("dateTime", any<Class<*>>()) } returns "2020-02-01T01:23:45"
+        }
 
-        val result = KRowMapper(::Dst).mapRow(resultSet, 0)
+        val result = mapper.mapRow(resultSet, 0)
 
         assertEquals(
             LocalDateTime.parse("2020-02-01T01:23:45", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")),
@@ -53,7 +56,7 @@ class DeserializerTest {
             every { getObject("dateTime", any<Class<*>>()) } returns null
         }
 
-        val result = KRowMapper(::Dst).mapRow(resultSet, 0)
+        val result = mapper.mapRow(resultSet, 0)
 
         assertNull(result.dateTime)
     }
