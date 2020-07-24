@@ -7,6 +7,7 @@ import java.sql.ResultSet
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class DeserializeByMethodTest {
     data class ByConstructor @KColumnDeserializer constructor(val fooString: String)
@@ -29,8 +30,8 @@ class DeserializeByMethodTest {
     )
 
     @Test
-    @DisplayName("マッピングテスト")
-    fun test() {
+    @DisplayName("正常なマッピングの場合")
+    fun isCollect() {
         val resultSet = mockk<ResultSet>()
         every { resultSet.getObject("foo", any<Class<*>>()) } returns "foo"
         every { resultSet.getObject("bar", any<Class<*>>()) } returns "123"
@@ -43,5 +44,22 @@ class DeserializeByMethodTest {
         Assertions.assertEquals(123, result.bar.barShort)
         Assertions.assertEquals(321, result.baz.bazInt)
         Assertions.assertEquals("777", result.qux.quxString)
+    }
+
+    data class MultipleDeserializer(val qux: Int) {
+        @KColumnDeserializer
+        constructor(qux: String) : this(qux.toInt())
+
+        companion object {
+            @KColumnDeserializer
+            fun factory(qux: Double) = MultipleDeserializer(qux.toInt())
+        }
+    }
+    data class IllegalDst(val param: MultipleDeserializer)
+
+    @Test
+    @DisplayName("複数のKColumnDeserializerが定義されていた場合")
+    fun hasMultipleDeserializer() {
+        assertThrows<IllegalArgumentException> { KRowMapper(::IllegalDst) }
     }
 }
