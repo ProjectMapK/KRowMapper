@@ -72,11 +72,11 @@ Please see [here](https://jitpack.io/#ProjectMapK/KRowMapper/) for the formal in
 **2. add dependency**
 
 ```xml
-	<dependency>
-	    <groupId>com.github.ProjectMapK</groupId>
-	    <artifactId>KRowMapper</artifactId>
-	    <version>Tag</version>
-	</dependency>
+    <dependency>
+        <groupId>com.github.ProjectMapK</groupId>
+        <artifactId>KRowMapper</artifactId>
+        <version>Tag</version>
+    </dependency>
 ```
 
 ## Principle of operation
