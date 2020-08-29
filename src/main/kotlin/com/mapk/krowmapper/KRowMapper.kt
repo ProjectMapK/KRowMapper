@@ -2,10 +2,10 @@ package com.mapk.krowmapper
 
 import com.mapk.core.KFunctionForCall
 import com.mapk.core.toKConstructor
+import org.springframework.jdbc.core.RowMapper
 import java.sql.ResultSet
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
-import org.springframework.jdbc.core.RowMapper
 
 class KRowMapper<T : Any> private constructor(private val function: KFunctionForCall<T>) : RowMapper<T> {
     constructor(function: KFunction<T>, parameterNameConverter: ((String) -> String)? = null) : this(

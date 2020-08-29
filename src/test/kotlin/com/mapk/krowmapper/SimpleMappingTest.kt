@@ -4,10 +4,10 @@ import com.google.common.base.CaseFormat
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.sql.ResultSet
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import java.sql.ResultSet
 
 @DisplayName("単純なマッピングテスト")
 class SimpleMappingTest {
