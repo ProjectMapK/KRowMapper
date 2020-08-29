@@ -5,10 +5,10 @@ import com.mapk.annotations.KUseDefaultArgument
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.sql.ResultSet
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import java.sql.ResultSet
 
 class DefaultValueTest {
     data class Dst(val fooId: Int, @param:KUseDefaultArgument val barValue: String = "default")

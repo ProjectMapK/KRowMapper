@@ -1,7 +1,6 @@
 package com.mapk.krowmapper
 
 import com.google.common.base.CaseFormat
-import javax.sql.DataSource
 import org.h2.jdbcx.JdbcDataSource
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.TestInstance
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert
+import javax.sql.DataSource
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("DBを用いてマッピングを行うテスト")
@@ -61,7 +61,8 @@ class UseDBMappingTest {
 
         jdbcTemplate = JdbcTemplate(dataSource)
 
-        jdbcTemplate.execute("""
+        jdbcTemplate.execute(
+            """
             CREATE TABLE IF NOT EXISTS `foo_table` (
               `foo_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
               `foo_name` VARCHAR(255) NOT NULL,
@@ -70,7 +71,8 @@ class UseDBMappingTest {
               `description` VARCHAR(1023) NULL DEFAULT NULL,
               PRIMARY KEY (`foo_id`)
             );
-        """.trimIndent())
+            """.trimIndent()
+        )
 
         val data = FooInsert(10, "Foo", FooStatus.archive, false, null)
 
@@ -79,9 +81,10 @@ class UseDBMappingTest {
 
     @Test
     fun test() {
-        val result = jdbcTemplate.query("SELECT * FROM foo_table", KRowMapper((Foo)::fooFactory) {
-            CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, it)
-        }).single()
+        val result = jdbcTemplate.query(
+            "SELECT * FROM foo_table",
+            KRowMapper((Foo)::fooFactory) { CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, it) }
+        ).single()
 
         assertEquals(
             Foo(10, "Foo", FooStatus.archive, false, null),

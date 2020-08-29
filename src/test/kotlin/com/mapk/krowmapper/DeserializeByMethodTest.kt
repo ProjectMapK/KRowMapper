@@ -3,11 +3,11 @@ package com.mapk.krowmapper
 import com.mapk.annotations.KColumnDeserializer
 import io.mockk.every
 import io.mockk.mockk
-import java.sql.ResultSet
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.sql.ResultSet
 
 class DeserializeByMethodTest {
     data class ByConstructor @KColumnDeserializer constructor(val fooString: String)
