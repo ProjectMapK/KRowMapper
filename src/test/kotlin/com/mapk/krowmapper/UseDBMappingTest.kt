@@ -61,7 +61,8 @@ class UseDBMappingTest {
 
         jdbcTemplate = JdbcTemplate(dataSource)
 
-        jdbcTemplate.execute("""
+        jdbcTemplate.execute(
+            """
             CREATE TABLE IF NOT EXISTS `foo_table` (
               `foo_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
               `foo_name` VARCHAR(255) NOT NULL,
@@ -70,7 +71,8 @@ class UseDBMappingTest {
               `description` VARCHAR(1023) NULL DEFAULT NULL,
               PRIMARY KEY (`foo_id`)
             );
-        """.trimIndent())
+            """.trimIndent()
+        )
 
         val data = FooInsert(10, "Foo", FooStatus.archive, false, null)
 
