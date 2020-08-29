@@ -80,9 +80,11 @@ private fun <T : Any> ValueParameter<T>.getDeserializer(): AbstractKColumnDeseri
 }
 
 private fun <T : Any> KClass<T>.getDeserializer(): KFunction<T>? {
-    val deserializers = deserializerFromConstructors(this) +
-            deserializerFromStaticMethods(this) +
-            deserializerFromCompanionObject(this)
+    val deserializers: List<KFunction<T>> = ArrayList<KFunction<T>>().also {
+        it.addAll(deserializerFromConstructors(this))
+        it.addAll(deserializerFromStaticMethods(this))
+        it.addAll(deserializerFromCompanionObject(this))
+    }
 
     return when {
         deserializers.size <= 1 -> deserializers.singleOrNull()
