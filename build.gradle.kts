@@ -33,7 +33,7 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation(kotlin("reflect"))
-    api("com.github.ProjectMapK:Shared:0.17")
+    api("com.github.ProjectMapK:Shared:0.18")
     // 使うのはRowMapperのみなため他はexclude、またバージョンそのものは使う相手に合わせるためcompileOnly
     compileOnly(group = "org.springframework", name = "spring-jdbc", version = "5.2.7.RELEASE") {
         exclude(module = "spring-beans")
