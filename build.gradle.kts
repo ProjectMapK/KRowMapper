@@ -1,15 +1,15 @@
 plugins {
     id("maven")
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.4.10"
+    id("org.jetbrains.kotlin.jvm") version "1.4.21"
     // その他補助系
-    id("org.jlleitschuh.gradle.ktlint") version "9.3.0"
+    id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
     id("jacoco")
     id("com.github.ben-manes.versions") version "0.28.0"
 }
 
 group = "com.mapk"
-version = "0.18"
+version = "0.0.19"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -33,23 +33,23 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation(kotlin("reflect"))
-    api("com.github.ProjectMapK:Shared:0.18")
+    api("com.github.ProjectMapK:Shared:0.19")
     // 使うのはRowMapperのみなため他はexclude、またバージョンそのものは使う相手に合わせるためcompileOnly
-    compileOnly(group = "org.springframework", name = "spring-jdbc", version = "5.2.7.RELEASE") {
+    compileOnly(group = "org.springframework", name = "spring-jdbc", version = "5.3.2") {
         exclude(module = "spring-beans")
         exclude(module = "spring-jcl")
         exclude(module = "spring-tx")
     }
 
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
-    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = "5.6.2") {
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = "5.7.0") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     // https://mvnrepository.com/artifact/io.mockk/mockk
-    testImplementation("io.mockk:mockk:1.10.0")
+    testImplementation("io.mockk:mockk:1.10.3-jdk8")
 
     // テスト時には無いと困るため、別口でimplementation
-    testImplementation(group = "org.springframework", name = "spring-jdbc", version = "5.2.7.RELEASE")
+    testImplementation(group = "org.springframework", name = "spring-jdbc", version = "5.3.2")
     // https://mvnrepository.com/artifact/com.h2database/h2
     testImplementation(group = "com.h2database", name = "h2", version = "1.4.200")
 
