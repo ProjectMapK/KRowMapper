@@ -35,7 +35,7 @@ dependencies {
     implementation(kotlin("reflect"))
     api("com.github.ProjectMapK:Shared:0.19")
     // 使うのはRowMapperのみなため他はexclude、またバージョンそのものは使う相手に合わせるためcompileOnly
-    compileOnly(group = "org.springframework", name = "spring-jdbc", version = "5.2.7.RELEASE") {
+    compileOnly(group = "org.springframework", name = "spring-jdbc", version = "5.3.2") {
         exclude(module = "spring-beans")
         exclude(module = "spring-jcl")
         exclude(module = "spring-tx")
