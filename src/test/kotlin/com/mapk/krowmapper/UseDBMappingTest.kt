@@ -35,7 +35,11 @@ class UseDBMappingTest {
                 isBar: String,
                 description: String?
             ) = Foo(
-                fooId, fooName, fooStatus, isBar.toBoolean(), description
+                fooId,
+                fooName,
+                fooStatus,
+                isBar.toBoolean(),
+                description
             )
         }
     }
