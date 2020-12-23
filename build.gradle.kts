@@ -49,7 +49,7 @@ dependencies {
     testImplementation("io.mockk:mockk:1.10.3-jdk8")
 
     // テスト時には無いと困るため、別口でimplementation
-    testImplementation(group = "org.springframework", name = "spring-jdbc", version = "5.2.7.RELEASE")
+    testImplementation(group = "org.springframework", name = "spring-jdbc", version = "5.3.2")
     // https://mvnrepository.com/artifact/com.h2database/h2
     testImplementation(group = "com.h2database", name = "h2", version = "1.4.200")
 
