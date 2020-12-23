@@ -42,7 +42,7 @@ dependencies {
     }
 
     // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter
-    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = "5.6.2") {
+    testImplementation(group = "org.junit.jupiter", name = "junit-jupiter", version = "5.7.0") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
     // https://mvnrepository.com/artifact/io.mockk/mockk
