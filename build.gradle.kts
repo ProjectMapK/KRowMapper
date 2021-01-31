@@ -15,23 +15,12 @@ java {
     sourceCompatibility = JavaVersion.VERSION_1_8
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath(kotlin("gradle-plugin"))
-    }
-}
-
 repositories {
     mavenCentral()
     maven { setUrl("https://jitpack.io") }
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation(kotlin("reflect"))
     api("com.github.ProjectMapK:Shared:0.19")
     // 使うのはRowMapperのみなため他はexclude、またバージョンそのものは使う相手に合わせるためcompileOnly
