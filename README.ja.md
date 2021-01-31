@@ -8,8 +8,8 @@ KRowMapper
 `KRowMapper`は`Kotlin`向けの`RowMapper`であり、以下の機能を提供します。
 
 - `BeanPropertyRowMapper`と同等の、最小限の労力でのオブジェク関係トマッピング（`ORM`）
+- [`BeanPropertyRowMapper`より高速](https://github.com/ProjectMapK/MapKInspections#krowmapper)なマッピング
 - リフレクションを用いた関数呼び出しベースの柔軟で安全なマッピング
-- 豊富な機能による、より柔軟かつ労力の少ないマッピング
 
 ## デモコード
 手動でマッピングコードを書いた場合と`KRowMapper`を用いた場合を比較します。  
