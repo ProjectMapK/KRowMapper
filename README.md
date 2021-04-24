@@ -17,6 +17,12 @@ KRowMapper
 - [Faster mapping than `BeanPropertyRowMapper`](https://github.com/ProjectMapK/MapKInspections#krowmapper).
 - Flexible and safe mapping based on function calls with `reflection`.
 
+## Notes
+With the update to `SpringFramework 5.3`/`SpringBoot 2.4`, mapping by constructor call is now supported by the `DataClassRowMapper`.  
+If you do not need to use an external library, please consider using this one.
+
+- [DataClassRowMapper \(Spring Framework 5\.3\.6 API\) \- Javadoc](https://spring.pleiades.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/DataClassRowMapper.html)
+
 ## Demo code
 Here is a comparison between writing the mapping code manually and using `KRowMapper`.  
 The more arguments you write manually, the more you need to write, but if you use `KRowMapper` This allows you to do the mapping without writing any code.  
