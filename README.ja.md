@@ -11,6 +11,12 @@ KRowMapper
 - [`BeanPropertyRowMapper`より高速](https://github.com/ProjectMapK/MapKInspections#krowmapper)なマッピング
 - リフレクションを用いた関数呼び出しベースの柔軟で安全なマッピング
 
+## Notes.
+`SpringFramework 5.3`/`SpringBoot 2.4`にて、コンストラクタ呼び出しでマッピングを行う`DataClassRowMapper`が追加されました。  
+外部ライブラリを利用する程でもない場合はこちらの利用も検討するようお願いします。
+
+- [DataClassRowMapper \(Spring Framework 5\.3\.6 API\) \- Javadoc](https://spring.pleiades.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/core/DataClassRowMapper.html)
+
 ## デモコード
 手動でマッピングコードを書いた場合と`KRowMapper`を用いた場合を比較します。  
 手動で書く場合引数が多ければ多いほど記述がかさみますが、`KRowMapper`を用いることで殆どコードを書かずにマッピングを行えます。  
