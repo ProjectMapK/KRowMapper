@@ -1,7 +1,6 @@
 package com.mapk.krowmapper
 
 import com.mapk.annotations.KColumnDeserializer
-import com.mapk.core.EnumMapper
 import com.mapk.core.KFunctionWithInstance
 import com.mapk.core.ValueParameter
 import com.mapk.core.getAnnotatedFunctions
@@ -42,10 +41,6 @@ internal sealed class ParameterForMap<S, D> {
         }
     }
 
-    private class Enum<D>(override val name: String, val enumClazz: Class<D>) : ParameterForMap<String, D>() {
-        override fun getObject(rs: ResultSet): D? = EnumMapper.getEnum(enumClazz, rs.getString(name))
-    }
-
     private class Deserializer<S : Any, D>(
         override val name: String,
         val srcClazz: Class<S>,
@@ -73,14 +68,7 @@ internal sealed class ParameterForMap<S, D> {
                 return Deserializer(param.name, srcClass, it)
             }
 
-            val requiredClazz = param.requiredClazz.javaObjectType
-
-            return requiredClazz.let {
-                when (it.isEnum) {
-                    true -> Enum(param.name, it)
-                    false -> Default(param.name, it, conversionService)
-                }
-            }
+            return Default(param.name, param.requiredClazz.javaObjectType, conversionService)
         }
     }
 }
