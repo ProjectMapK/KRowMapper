@@ -98,6 +98,9 @@ val dst: Dst = jdbcTemplate.query(query, KRowMapper(::Dst, /* 必要に応じた
 
 また、`KRowMapper`はデフォルトでは引数名によってカラムとの対応を見るため、「引数がキャメルケースでカラムはスネークケース」というような場合、引数名を変換する関数も渡す必要が有ります。
 
+必要に応じて値の変換のために`ConversionService`を渡すこともできます。  
+渡さなかった場合、`DefaultConversionService.sharedInstance`がデフォルトとして利用されます。
+
 ### method reference(KFunction)からの初期化
 `KRowMapper`は`method reference`から初期化できます。
 
@@ -230,12 +233,15 @@ val mapper: KRowMapper<Dst> = KRowMapper(::Dst, parameterNameConverter)
 ただし、よりプレーンな`Kotlin`に近い書き方をしたい場合にはこれらの機能を用いず、呼び出し対象メソッドで全ての初期化処理を書くことをお勧めします。
 
 ### 値のデシリアライズ
-`KRowMapper`は`java.sql.ResultSet`から値の取得を行うため、デフォルトではこの実装でサポートされていない型を取得することはできません。  
-この問題に対応するため、`KRowMapper`ではデフォルトの変換機能に加え以下の3種類のデシリアライズ方法を提供しています。
+`KRowMapper`は`BeanPropertyRowMapper`同様`ConversionService`（デフォルトでは`DefaultConversionService.sharedInstance`）を用いたデシリアライズをサポートしています。
+
+これに加え、より明示的で柔軟性の高いデシリアライズ方法として、`KRowMapper`では以下の3種類のデシリアライズ方法を提供しています。
 
 1. `KColumnDeserializer`アノテーションを利用したデシリアライズ
 2. デシリアライズアノテーションを自作してのデシリアライズ
 3. 複数引数からのデシリアライズ
+
+これらのデシリアライズ方法は`ConversionService`によるデシリアライズより優先的に適用されます。
 
 #### KColumnDeserializerアノテーションを利用したデシリアライズ
 自作のクラスで、かつ単一引数から初期化できる場合、`KColumnDeserializer`アノテーションを用いたデシリアライズが利用できます。  
@@ -470,6 +476,3 @@ class Foo(
     val description: String = ""
 )
 ```
-
-#### Enumをデシリアライズする
-DBに格納された値と`Enum::name`プロパティが一致する場合、特別な記述無しに`Enum`をデシリアライズすることができます。
