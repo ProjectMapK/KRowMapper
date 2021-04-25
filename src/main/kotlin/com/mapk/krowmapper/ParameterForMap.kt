@@ -9,6 +9,7 @@ import com.mapk.core.getAnnotatedFunctionsFromCompanionObject
 import com.mapk.core.getKClass
 import com.mapk.deserialization.AbstractKColumnDeserializer
 import com.mapk.deserialization.KColumnDeserializeBy
+import org.springframework.core.convert.ConversionException
 import org.springframework.core.convert.ConversionService
 import java.lang.IllegalArgumentException
 import java.sql.ResultSet
@@ -33,8 +34,11 @@ internal sealed class ParameterForMap<S, D> {
             if (requiredClazz.isInstance(it))
                 @Suppress("UNCHECKED_CAST")
                 it as D?
-            else
+            else try {
                 conversionService.convert(it, requiredClazz)
+            } catch (ex: ConversionException) {
+                throw IllegalStateException("Could not find a method to deserialize for '$name' parameter.", ex)
+            }
         }
     }
 
