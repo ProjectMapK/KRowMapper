@@ -19,7 +19,7 @@ class DefaultValueTest {
     @DisplayName("デフォルト値を用いたマッピングテスト")
     fun test() {
         val resultSet = mockk<ResultSet>()
-        every { resultSet.getObject("foo_id", any<Class<*>>()) } returns 1
+        every { resultSet.getObject("foo_id") } returns 1
         every { resultSet.getObject("bar_value", any<Class<*>>()) } returns "From result set."
 
         val result = KRowMapper(Dst::class, this::camelToSnake).mapRow(resultSet, 0)
@@ -27,7 +27,7 @@ class DefaultValueTest {
         Assertions.assertEquals(1, result.fooId)
         Assertions.assertEquals("default", result.barValue)
 
-        verify(exactly = 1) { resultSet.getObject("foo_id", Integer::class.java) }
+        verify(exactly = 1) { resultSet.getObject("foo_id") }
         verify(exactly = 0) { resultSet.getObject("bar_value", String::class.java) }
     }
 }

@@ -19,15 +19,15 @@ class SimpleMappingTest {
     @DisplayName("スネークケースsrc -> キャメルケースdst")
     fun test() {
         val resultSet = mockk<ResultSet>()
-        every { resultSet.getObject("foo_id", any<Class<*>>()) } returns 1
-        every { resultSet.getObject("str_value", any<Class<*>>()) } returns "str"
+        every { resultSet.getObject("foo_id") } returns 1
+        every { resultSet.getObject("str_value") } returns "str"
 
         val result = KRowMapper(::Dst, this::camelToSnake).mapRow(resultSet, 0)
 
         assertEquals(1, result.fooId)
         assertEquals("str", result.strValue)
 
-        verify(exactly = 1) { resultSet.getObject("foo_id", Integer::class.java) }
-        verify(exactly = 1) { resultSet.getObject("str_value", String::class.java) }
+        verify(exactly = 1) { resultSet.getObject("foo_id") }
+        verify(exactly = 1) { resultSet.getObject("str_value") }
     }
 }
