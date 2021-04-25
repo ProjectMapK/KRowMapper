@@ -103,6 +103,9 @@ Also, it supports the default arguments which are peculiar to `Kotlin`.
 Also, by default, `KRowMapper` compares argument names and column names to see if they correspond.  
 Therefore, in the case of "argument name is `camelCase` and column name is `snake_case`", it is necessary to pass a function that appropriately converts the naming convention of the argument name.
 
+You can also pass a `ConversionService` for value conversion if needed.  
+If you don't pass it, `DefaultConversionService.sharedInstance` will be used as default.
+
 ### Initialization from method reference(KFunction)
 You can initialize `KRowMapper` from `method reference(KFunction)` as follows It is.
 
@@ -235,12 +238,15 @@ By using the contents described so far, you can perform more flexible and safe m
 In addition, by making full use of the abundant functions provided by `KRowMapper`, further labor saving is possible.
 
 ### Deserialization
-Since `KRowMapper` gets the value from `java.sql.ResultSet`, by default it is not possible to get the type which is not supported by this implementation.
-To deal with this problem, `KRowMapper` provides the following three types of deserialization methods in addition to the default conversion function.
+`KRowMapper` supports deserialization using the `ConversionService` (`DefaultConversionService.sharedInstance` by default).
+
+In addition to this, as a more explicit and flexible deserialization method, `KRowMapper` provides the following three deserialization methods.
 
 1. Deserialization by using the `KColumnDeserializer` annotation.
 2. Deserialization by creating your own custom deserialization annotations.
 3. Deserialization from multiple arguments.
+
+These deserialization methods take precedence over deserialization by `ConversionService`.
 
 #### Deserialization by using the KColumnDeserializer annotation
 If it is a self-made class and can be initialized from a single argument, deserialization using the `KColumnDeserializer` annotation can be used.
@@ -481,6 +487,3 @@ class Foo(
     val description: String = ""
 )
 ```
-
-#### Deserialize Enum
-If the value stored in the DB and the `Enum::name` property of the map destination are the same, it will be automatically converted to You can deserialize the `Enum`.

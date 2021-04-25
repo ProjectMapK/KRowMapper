@@ -1,7 +1,6 @@
 package com.mapk.krowmapper
 
 import com.mapk.annotations.KColumnDeserializer
-import com.mapk.core.EnumMapper
 import com.mapk.core.KFunctionWithInstance
 import com.mapk.core.ValueParameter
 import com.mapk.core.getAnnotatedFunctions
@@ -9,6 +8,8 @@ import com.mapk.core.getAnnotatedFunctionsFromCompanionObject
 import com.mapk.core.getKClass
 import com.mapk.deserialization.AbstractKColumnDeserializer
 import com.mapk.deserialization.KColumnDeserializeBy
+import org.springframework.core.convert.ConversionException
+import org.springframework.core.convert.ConversionService
 import java.lang.IllegalArgumentException
 import java.sql.ResultSet
 import kotlin.reflect.KClass
@@ -23,12 +24,21 @@ internal sealed class ParameterForMap<S, D> {
     abstract val name: String
     abstract fun getObject(rs: ResultSet): D?
 
-    private class Plain<T>(override val name: String, val requiredClazz: Class<T>) : ParameterForMap<T, T>() {
-        override fun getObject(rs: ResultSet): T? = rs.getObject(name, requiredClazz)
-    }
-
-    private class Enum<D>(override val name: String, val enumClazz: Class<D>) : ParameterForMap<String, D>() {
-        override fun getObject(rs: ResultSet): D? = EnumMapper.getEnum(enumClazz, rs.getString(name))
+    private class Default<D>(
+        override val name: String,
+        val requiredClazz: Class<D>,
+        private val conversionService: ConversionService
+    ) : ParameterForMap<Any, D>() {
+        override fun getObject(rs: ResultSet): D? = rs.getObject(name)?.let {
+            if (requiredClazz.isInstance(it))
+                @Suppress("UNCHECKED_CAST")
+                it as D?
+            else try {
+                conversionService.convert(it, requiredClazz)
+            } catch (ex: ConversionException) {
+                throw IllegalStateException("Could not find a method to deserialize for '$name' parameter.", ex)
+            }
+        }
     }
 
     private class Deserializer<S : Any, D>(
@@ -45,22 +55,20 @@ internal sealed class ParameterForMap<S, D> {
     }
 
     companion object {
-        fun <T : Any> newInstance(param: ValueParameter<T>): ParameterForMap<*, T> {
+        fun <T : Any> newInstance(
+            param: ValueParameter<T>,
+            conversionService: ConversionService
+        ): ParameterForMap<*, T> {
             param.getDeserializer()?.let {
                 return Deserializer(param.name, it)
             }
 
             param.requiredClazz.getDeserializer()?.let {
-                val targetClass = it.parameters.single().getKClass().javaObjectType
-                return Deserializer(param.name, targetClass, it)
+                val srcClass = it.parameters.single().getKClass().javaObjectType
+                return Deserializer(param.name, srcClass, it)
             }
 
-            return param.requiredClazz.javaObjectType.let {
-                when (it.isEnum) {
-                    true -> Enum(param.name, it)
-                    false -> Plain(param.name, it)
-                }
-            }
+            return Default(param.name, param.requiredClazz.javaObjectType, conversionService)
         }
     }
 }

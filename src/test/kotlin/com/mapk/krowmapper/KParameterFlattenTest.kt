@@ -28,16 +28,16 @@ class KParameterFlattenTest {
     @DisplayName("スネークケースsrc -> キャメルケースdst")
     fun test() {
         val resultSet = mockk<ResultSet>() {
-            every { getObject("baz_baz_foo_foo", any<Class<*>>()) } returns 1
-            every { getObject("baz_baz_bar_bar", any<Class<*>>()) } returns "str"
-            every { getObject("qux_qux", any<Class<*>>()) } returns LocalDateTime.MIN
+            every { getObject("baz_baz_foo_foo") } returns 1
+            every { getObject("baz_baz_bar_bar") } returns "str"
+            every { getObject("qux_qux") } returns LocalDateTime.MIN
         }
 
         val result = KRowMapper<Dst>(this::camelToSnake).mapRow(resultSet, 0)
         assertEquals(expected, result)
 
-        verify(exactly = 1) { resultSet.getObject("baz_baz_foo_foo", Integer::class.java) }
-        verify(exactly = 1) { resultSet.getObject("baz_baz_bar_bar", String::class.java) }
-        verify(exactly = 1) { resultSet.getObject("qux_qux", LocalDateTime::class.java) }
+        verify(exactly = 1) { resultSet.getObject("baz_baz_foo_foo") }
+        verify(exactly = 1) { resultSet.getObject("baz_baz_bar_bar") }
+        verify(exactly = 1) { resultSet.getObject("qux_qux") }
     }
 }
