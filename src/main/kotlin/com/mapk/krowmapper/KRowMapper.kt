@@ -37,7 +37,7 @@ class KRowMapper<T : Any> private constructor(
 
     private val conversionService: ConversionService = conversionService ?: DefaultConversionService.getSharedInstance()
     private val parameters: List<ParameterForMap<*, *>> =
-        function.requiredParameters.map { ParameterForMap.newInstance(it) }
+        function.requiredParameters.map { ParameterForMap.newInstance(it, this.conversionService) }
 
     override fun mapRow(rs: ResultSet, rowNum: Int): T {
         val adaptor = function.getArgumentAdaptor()

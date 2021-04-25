@@ -9,6 +9,7 @@ import com.mapk.core.getAnnotatedFunctionsFromCompanionObject
 import com.mapk.core.getKClass
 import com.mapk.deserialization.AbstractKColumnDeserializer
 import com.mapk.deserialization.KColumnDeserializeBy
+import org.springframework.core.convert.ConversionService
 import java.lang.IllegalArgumentException
 import java.sql.ResultSet
 import kotlin.reflect.KClass
@@ -23,8 +24,18 @@ internal sealed class ParameterForMap<S, D> {
     abstract val name: String
     abstract fun getObject(rs: ResultSet): D?
 
-    private class Plain<T>(override val name: String, val requiredClazz: Class<T>) : ParameterForMap<T, T>() {
-        override fun getObject(rs: ResultSet): T? = rs.getObject(name, requiredClazz)
+    private class Default<D>(
+        override val name: String,
+        val requiredClazz: Class<D>,
+        private val conversionService: ConversionService
+    ) : ParameterForMap<Any, D>() {
+        override fun getObject(rs: ResultSet): D? = rs.getObject(name)?.let {
+            if (requiredClazz.isInstance(it))
+                @Suppress("UNCHECKED_CAST")
+                it as D?
+            else
+                conversionService.convert(it, requiredClazz)
+        }
     }
 
     private class Enum<D>(override val name: String, val enumClazz: Class<D>) : ParameterForMap<String, D>() {
@@ -45,20 +56,25 @@ internal sealed class ParameterForMap<S, D> {
     }
 
     companion object {
-        fun <T : Any> newInstance(param: ValueParameter<T>): ParameterForMap<*, T> {
+        fun <T : Any> newInstance(
+            param: ValueParameter<T>,
+            conversionService: ConversionService
+        ): ParameterForMap<*, T> {
             param.getDeserializer()?.let {
                 return Deserializer(param.name, it)
             }
 
             param.requiredClazz.getDeserializer()?.let {
-                val targetClass = it.parameters.single().getKClass().javaObjectType
-                return Deserializer(param.name, targetClass, it)
+                val srcClass = it.parameters.single().getKClass().javaObjectType
+                return Deserializer(param.name, srcClass, it)
             }
 
-            return param.requiredClazz.javaObjectType.let {
+            val requiredClazz = param.requiredClazz.javaObjectType
+
+            return requiredClazz.let {
                 when (it.isEnum) {
                     true -> Enum(param.name, it)
-                    false -> Plain(param.name, it)
+                    false -> Default(param.name, it, conversionService)
                 }
             }
         }
